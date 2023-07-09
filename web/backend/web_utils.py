@@ -46,9 +46,11 @@ class WebUtils:
         """
         try:
             version_res = RequestUtils(proxies=Config().get_proxies()).get_res(
-                "https://api.github.com/repos/jxxghp/nas-tools/releases/latest")
+                "https://api.github.com/repos/frank-we/nas-tools/releases/latest"
+            )
             commit_res = RequestUtils(proxies=Config().get_proxies()).get_res(
-                "https://api.github.com/repos/jxxghp/nas-tools/commits/master")
+                "https://api.github.com/repos/frank-we/nas-tools/commits/master"
+            )
             if version_res and commit_res:
                 ver_json = version_res.json()
                 commit_json = commit_res.json()
@@ -77,9 +79,10 @@ class WebUtils:
             original_title = info.get("original_title")
             year = info.get("year")
             if original_title:
-                media_info = Media().get_media_info(title=f"{original_title} {year}",
-                                                    mtype=mtype,
-                                                    append_to_response="all")
+                media_info = Media().get_media_info(
+                    title=f"{original_title} {year}",
+                    mtype=mtype,
+                    append_to_response="all")
             if not media_info or not media_info.tmdb_info:
                 media_info = Media().get_media_info(title=f"{title} {year}",
                                                     mtype=mtype,
@@ -108,7 +111,8 @@ class WebUtils:
                                          append_to_response="all")
             if not info:
                 return None
-            media_info = MetaInfo(title=info.get("title") if mtype == MediaType.MOVIE else info.get("name"))
+            media_info = MetaInfo(title=info.get("title") if mtype ==
+                                  MediaType.MOVIE else info.get("name"))
             media_info.set_tmdb_info(info)
 
         return media_info
@@ -124,13 +128,15 @@ class WebUtils:
         """
         if not keyword:
             return []
-        mtype, key_word, season_num, episode_num, _, content = StringUtils.get_keyword_from_string(keyword)
+        mtype, key_word, season_num, episode_num, _, content = StringUtils.get_keyword_from_string(
+            keyword)
         if source == "tmdb":
             use_douban_titles = False
         elif source == "douban":
             use_douban_titles = True
         else:
-            use_douban_titles = Config().get_config("laboratory").get("use_douban_titles")
+            use_douban_titles = Config().get_config("laboratory").get(
+                "use_douban_titles")
         if use_douban_titles:
             medias = DouBan().search_douban_medias(keyword=key_word,
                                                    mtype=mtype,
@@ -150,8 +156,11 @@ class WebUtils:
                 if meta_info.type != MediaType.MOVIE and tmp_info.type == MediaType.MOVIE:
                     continue
                 if tmp_info.begin_season:
-                    tmp_info.title = "%s 第%s季" % (tmp_info.title, cn2an.an2cn(meta_info.begin_season, mode='low'))
+                    tmp_info.title = "%s 第%s季" % (
+                        tmp_info.title,
+                        cn2an.an2cn(meta_info.begin_season, mode='low'))
                 if tmp_info.begin_episode:
-                    tmp_info.title = "%s 第%s集" % (tmp_info.title, meta_info.begin_episode)
+                    tmp_info.title = "%s 第%s集" % (tmp_info.title,
+                                                  meta_info.begin_episode)
                 medias.append(tmp_info)
         return medias
