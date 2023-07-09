@@ -115,13 +115,13 @@ def start_service():
     # 启动监控服务
     run_monitor()
     # 启动刷流服务
-    BrushTask()
+    # BrushTask()
     # 启动自定义订阅服务
-    RssChecker()
+    # RssChecker()
     # 启动自动删种服务
-    TorrentRemover()
+    # TorrentRemover()
     # 启动播放限速服务
-    SpeedLimiter()
+    # SpeedLimiter()
     # 加载索引器配置
     IndexerHelper()
     # 初始化浏览器

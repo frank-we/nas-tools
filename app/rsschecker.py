@@ -260,8 +260,7 @@ class RssChecker(object):
                         "exclude": taskinfo.get("exclude"),
                         "rule": taskinfo.get("filter")
                     }
-                    match_flag, res_order, match_msg = self.filter.check_torrent_filter(meta_info=media_info,
-                                                                                        filter_args=filter_args)
+                    match_flag, res_order, match_msg = self.filter.check_torrent_filter(meta_info=media_info, filter_args=filter_args)
                     # 未匹配
                     if not match_flag:
                         log.info(f"【RssChecker】{match_msg}")

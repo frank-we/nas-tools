@@ -24,9 +24,10 @@ class Filter:
         self._groups = self.dbhelper.get_config_filter_group()
         self._rules = self.dbhelper.get_config_filter_rule()
 
-    def get_rule_groups(self, groupid=None, default=False):
+    def get_rule_groups(self, groupid=None, default=False, type=None):
         """
         获取所有规则组
+        :param type: vedio 下载过滤 / sync 同步过滤
         """
         ret_groups = []
         for group in self._groups:
@@ -34,21 +35,27 @@ class Filter:
                 "id": group.ID,
                 "name": group.GROUP_NAME,
                 "default": group.IS_DEFAULT,
-                "note": group.NOTE
+                "note": group.NOTE,
+                "type": group.TYPE
             }
             if (groupid and str(groupid) == str(group.ID)) \
                     or (default and group.IS_DEFAULT == "Y"):
                 return group_info
+            if (type):
+                if (str(type) == str(group.TYPE)):
+                    ret_groups.append(group_info)
+                continue
             ret_groups.append(group_info)
         if groupid or default:
             return {}
         return ret_groups
 
-    def get_rule_infos(self):
+    def get_rule_infos(self, type=None):
         """
         获取所有的规则组及组内的规则
+        :param type: vedio 下载过滤 / sync 同步过滤
         """
-        groups = self.get_rule_groups()
+        groups = self.get_rule_groups(type=type)
         for group in groups:
             group['rules'] = self.get_rules(group.get("id"))
         return groups

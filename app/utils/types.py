@@ -5,6 +5,7 @@ class MediaType(Enum):
     TV = '电视剧'
     MOVIE = '电影'
     ANIME = '动漫'
+    JAV = 'jav'
     UNKNOWN = '未知'
 
 
@@ -33,6 +34,15 @@ class SearchType(Enum):
     SLACK = "Slack"
     SYNOLOGY = "Synology Chat"
 
+class JavDomainType(Enum):
+    ALL = 'all'
+    JAV321 = 'jav321'
+    AVSOX = 'avsox'
+    DMM = 'dmm'
+    JAVDB = 'javdb'
+    MGSTAGE = 'mgstage'
+    XCITY = 'xcity'
+    JAVBUS = 'javbus'
 
 class RmtMode(Enum):
     LINK = "硬链接"

@@ -735,6 +735,13 @@ class ModuleConf(object):
                     "tooltip": "在Jellyfin设置->高级->API密钥处生成",
                     "type": "text",
                     "placeholder": ""
+                },
+                "show_log": {
+                    "id": "jellyfin.show_log",
+                    "required": False,
+                    "title": "获取日志",
+                    "tooltip": "是否获取和在首页展示jellyfin活动日志",
+                    "type": "switch"
                 }
             }
         },

@@ -11,10 +11,10 @@ DEFAULT_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 # 收藏了的媒体的目录名，名字可以改，在Emby中点击红星则会自动将电影转移到此分类下，需要在Emby Webhook中配置用户行为通知
 RMT_FAVTYPE = '精选'
 # 支持的媒体文件后缀格式
-RMT_MEDIAEXT = ['.mp4', '.mkv', '.ts', '.iso',
-                '.rmvb', '.avi', '.mov', '.mpeg',
-                '.mpg', '.wmv', '.3gp', '.asf',
-                '.m4v', '.flv', '.m2ts', '.strm']
+RMT_MEDIAEXT = [
+    '.mp4', '.mkv', '.ts', '.iso', '.rmvb', '.avi', '.mov', '.mpeg', '.mpg',
+    '.wmv', '.3gp', '.asf', '.m4v', '.flv', '.m2ts', '.strm'
+]
 # 支持的字幕文件后缀格式
 RMT_SUBEXT = ['.srt', '.ass', '.ssa']
 # 电视剧动漫的分类genre_ids
@@ -63,6 +63,8 @@ TMDB_PEOPLE_PROFILE_URL = 'https://www.themoviedb.org/person/%s'
 PT_TAG = "NASTOOL"
 # 电影默认命名格式
 DEFAULT_MOVIE_FORMAT = '{title} ({year})/{title} ({year})-{part} - {videoFormat}'
+# 电影默认命名格式
+DEFAULT_JAV_FORMAT = '{number}{cn_sub} {title}/{number}{cn_sub} {title} {actor}'
 # 电视剧默认命名格式
 DEFAULT_TV_FORMAT = '{title} ({year})/Season {season}/{title} - {season_episode}-{part} - 第 {episode} 集'
 # 辅助识别参数
@@ -71,9 +73,11 @@ KEYWORD_SEARCH_WEIGHT_2 = [10, 2, 1]
 KEYWORD_SEARCH_WEIGHT_3 = [10, 2]
 KEYWORD_STR_SIMILARITY_THRESHOLD = 0.2
 KEYWORD_DIFF_SCORE_THRESHOLD = 30
-KEYWORD_BLACKLIST = ['中字', '韩语', '双字', '中英', '日语', '双语', '国粤', 'HD', 'BD', '中日', '粤语', '完全版',
-                     '法语', '西班牙语', 'HRHDTVAC3264', '未删减版', '未删减', '国语', '字幕组', '人人影视', 'www66ystv',
-                     '人人影视制作', '英语', 'www6vhaotv', '无删减版', '完成版', '德意']
+KEYWORD_BLACKLIST = [
+    '中字', '韩语', '双字', '中英', '日语', '双语', '国粤', 'HD', 'BD', '中日', '粤语', '完全版',
+    '法语', '西班牙语', 'HRHDTVAC3264', '未删减版', '未删减', '国语', '字幕组', '人人影视',
+    'www66ystv', '人人影视制作', '英语', 'www6vhaotv', '无删减版', '完成版', '德意'
+]
 
 # WebDriver路径
 WEBDRIVER_PATH = {
@@ -82,10 +86,7 @@ WEBDRIVER_PATH = {
 }
 
 # Xvfb虚拟显示路程
-XVFB_PATH = [
-    "/usr/bin/Xvfb",
-    "/usr/local/bin/Xvfb"
-]
+XVFB_PATH = ["/usr/bin/Xvfb", "/usr/local/bin/Xvfb"]
 
 # 线程锁
 lock = Lock()
@@ -95,6 +96,7 @@ _CONFIG = None
 
 
 def singleconfig(cls):
+
     def _singleconfig(*args, **kwargs):
         global _CONFIG
         if not _CONFIG:
@@ -123,7 +125,8 @@ class Config(object):
                 print("【Config】NASTOOL_CONFIG 环境变量未设置，程序无法工作，正在退出...")
                 quit()
             if not os.path.exists(self._config_path):
-                cfg_tp_path = os.path.join(self.get_inner_config_path(), "config.yaml")
+                cfg_tp_path = os.path.join(self.get_inner_config_path(),
+                                           "config.yaml")
                 cfg_tp_path = cfg_tp_path.replace("\\", "/")
                 shutil.copy(cfg_tp_path, self._config_path)
                 print("【Config】config.yaml 配置文件不存在，已将配置文件模板复制到配置目录...")
@@ -140,12 +143,12 @@ class Config(object):
             return False
 
     def init_syspath(self):
-        with open(os.path.join(self.get_root_path(),
-                               "third_party.txt"), "r") as f:
+        with open(os.path.join(self.get_root_path(), "third_party.txt"),
+                  "r") as f:
             for third_party_lib in f.readlines():
-                module_path = os.path.join(self.get_root_path(),
-                                           "third_party",
-                                           third_party_lib.strip()).replace("\\", "/")
+                module_path = os.path.join(self.get_root_path(), "third_party",
+                                           third_party_lib.strip()).replace(
+                                               "\\", "/")
                 if module_path not in sys.path:
                     sys.path.append(module_path)
 

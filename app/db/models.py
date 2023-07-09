@@ -13,6 +13,7 @@ class CONFIGFILTERGROUP(Base):
     GROUP_NAME = Column(Text)
     IS_DEFAULT = Column(Text)
     NOTE = Column(Text)
+    TYPE = Column(Text)
 
 
 class CONFIGFILTERRULES(Base):
@@ -65,6 +66,9 @@ class CONFIGSYNCPATHS(Base):
     MODE = Column(Text)
     RENAME = Column(Integer)
     ENABLED = Column(Integer)
+    GROUP_ID = Column(Integer)
+    CUSTOMWORD_ID = Column(Integer)
+    DOMAIN = Column(Text)
     NOTE = Column(Text)
 
 
@@ -134,9 +138,7 @@ class CUSTOMWORDGROUPS(Base):
 
 class DOUBANMEDIAS(Base):
     __tablename__ = 'DOUBAN_MEDIAS'
-    __table_args__ = (
-        Index('INDX_DOUBAN_MEDIAS_NAME', 'NAME', 'YEAR'),
-    )
+    __table_args__ = (Index('INDX_DOUBAN_MEDIAS_NAME', 'NAME', 'YEAR'), )
 
     ID = Column(Integer, Sequence('ID'), primary_key=True)
     NAME = Column(Text)
@@ -253,9 +255,8 @@ class RSSMOVIES(Base):
 
 class RSSTORRENTS(Base):
     __tablename__ = 'RSS_TORRENTS'
-    __table_args__ = (
-        Index('INDX_RSS_TORRENTS_NAME', 'TITLE', 'YEAR', 'SEASON', 'EPISODE'),
-    )
+    __table_args__ = (Index('INDX_RSS_TORRENTS_NAME', 'TITLE', 'YEAR',
+                            'SEASON', 'EPISODE'), )
 
     ID = Column(Integer, Sequence('ID'), primary_key=True)
     TORRENT_NAME = Column(Text)
@@ -413,10 +414,11 @@ class SITEBRUSHTORRENTS(Base):
 
 class SITESTATISTICSHISTORY(Base):
     __tablename__ = 'SITE_STATISTICS_HISTORY'
-    __table_args__ = (
-        Index('INDX_SITE_STATISTICS_HISTORY_DS', 'DATE', 'URL'),
-        Index('UN_INDX_SITE_STATISTICS_HISTORY_DS', 'DATE', 'URL', unique=True)
-    )
+    __table_args__ = (Index('INDX_SITE_STATISTICS_HISTORY_DS', 'DATE', 'URL'),
+                      Index('UN_INDX_SITE_STATISTICS_HISTORY_DS',
+                            'DATE',
+                            'URL',
+                            unique=True))
 
     ID = Column(Integer, Sequence('ID'), primary_key=True)
     SITE = Column(Text)
@@ -434,9 +436,7 @@ class SITESTATISTICSHISTORY(Base):
 
 class SITEUSERINFOSTATS(Base):
     __tablename__ = 'SITE_USER_INFO_STATS'
-    __table_args__ = (
-        Index('INDX_SITE_USER_INFO_STATS_URL', 'URL'),
-    )
+    __table_args__ = (Index('INDX_SITE_USER_INFO_STATS_URL', 'URL'), )
 
     ID = Column(Integer, Sequence('ID'), primary_key=True)
     SITE = Column(Text, index=True)
@@ -485,9 +485,7 @@ class SYNCHISTORY(Base):
 
 class SYSTEMDICT(Base):
     __tablename__ = 'SYSTEM_DICT'
-    __table_args__ = (
-        Index('INDX_SYSTEM_DICT', 'TYPE', 'KEY'),
-    )
+    __table_args__ = (Index('INDX_SYSTEM_DICT', 'TYPE', 'KEY'), )
 
     ID = Column(Integer, Sequence('ID'), primary_key=True)
     TYPE = Column(Text)
@@ -548,9 +546,7 @@ class USERRSSTASKHISTORY(Base):
 
 class MEDIASYNCITEMS(BaseMedia):
     __tablename__ = 'MEDIASYNC_ITEMS'
-    __table_args__ = (
-        Index('INDX_MEDIASYNC_ITEMS_SL', 'SERVER', 'LIBRARY'),
-    )
+    __table_args__ = (Index('INDX_MEDIASYNC_ITEMS_SL', 'SERVER', 'LIBRARY'), )
 
     ID = Column(Integer, Sequence('ID'), primary_key=True)
     SERVER = Column(Text)

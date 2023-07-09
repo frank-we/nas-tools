@@ -39,88 +39,95 @@
 </div>
 <!-- 业务页面代码 -->
 {% if Count > 0 %}
-  <div class="page-body">
-    <div class="container-xl">
-      <div class="d-grid gap-3 grid-info-card">
-        {% for RuleGroup in RuleGroups %}
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title"><strong>{{ RuleGroup.name }}</strong></h3>
-              <div class="card-actions btn-actions">
-                <a href="javascript:share_filtergroup('{{ RuleGroup.id }}')" class="btn-action" title="分享规则组">
-                  {{ SVG.share() }}
-                </a>
-                <a href="javascript:set_default_filtergroup('{{ RuleGroup.id }}')" class="btn-action"
-                   title="设置/取消默认">
-                  {% if RuleGroup.default == 'Y' %}
-                    <span class="text-purple">{{ SVG.star('icon-filled') }}</span>
-                  {% else %}
-                    {{ SVG.star() }}
-                  {% endif %}
-                </a>
-                <a href="javascript:show_add_filterrule_modal('{{ RuleGroup.id }}', '{{ RuleGroup.name }}')"
-                   class="btn-action" title="增加规则">
-                  {{ SVG.plus() }}
-                </a>
-                <a href="javascript:del_filtergroup_modal('{{ RuleGroup.id }}', '{{ RuleGroup.name }}')"
-                   class="btn-action" title="删除规则组">
-                  {{ SVG.x() }}
-                </a>
-              </div>
-            </div>
-            <div class="card-body p-2">
-              <div class="row row-cards">
-                {% if RuleGroup.rules %}
-                  {% for Rule in RuleGroup.rules %}
-                    <div class="col-12">
-                      <a class="card card-link card-link-pop card-borderless"
-                         href="javascript:show_modify_filterrule_modal('{{ RuleGroup.id }}', '{{ Rule.id }}', '{{ RuleGroup.name }}')"
-                         title="编辑规则">
-                        <div class="card-body p-2">
-                          <h3 class="card-title">{{ Rule.name }}</h3>
-                          <div class="w-100">
-                            {% if Rule.free_text %}
-                              <span class="badge bg-info me-1 mb-1 text-wrap text-start"
-                                    title="促销" style='word-break: break-all'>{{ Rule.free_text }}</span>
-                            {% endif %}
-                            {% for include in Rule.include %}
-                              <span class="badge badge-outline text-info me-1 mb-1 text-wrap text-start"
-                                    title="包含规则" style='word-break: break-all'>包含: {{ include }}</span>
-                            {% endfor %}
-                            {% for exclude in Rule.exclude %}
-                              <span class="badge badge-outline text-red me-1 mb-1 text-wrap text-start"
-                                    title="排除规则" style='word-break: break-all'>排除: {{ exclude }}</span>
-                            {% endfor %}
-                            {% if Rule.size %}
-                              <span class="badge badge-outline text-orange me-1 mb-1 text-wrap text-start"
-                                    title="大小限制" style='word-break: break-all'>大小: {{ Rule.size }}</span>
-                            {% endif %}
-                          </div>
-                        </div>
-                      </a>
-                    </div>
-                  {% endfor %}
-                {% else %}
-                  {{ OOPS.empty('没有规则', '请点击"+"添加规则。') }}
-                {% endif %}
-              </div>
-            </div>
+<div class="page-body">
+  <div class="container-xl">
+    <div class="d-grid gap-3 grid-info-card">
+      {% for RuleGroup in RuleGroups %}
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title"><strong>{{ RuleGroup.name }}</strong></h3>
+          <div class="card-actions btn-actions">
+            <input type="hidden" value="0" id="collapse_{{ RuleGroup.id }}"></input>
+            <a href="javascript:set_filtergroup_collapse('{{ RuleGroup.id }}')" class="btn-action" title="展开/收起">
+              {% if RuleGroup.collapse %}
+              <span class="text-purple">{{ SVG.chevron_down() }}</span>
+              {% else %}
+              {{ SVG.chevron_up() }}
+              {% endif %}
+            </a>
+            <a href="javascript:share_filtergroup('{{ RuleGroup.id }}')" class="btn-action" title="分享规则组">
+              {{ SVG.share() }}
+            </a>
+            <a href="javascript:set_default_filtergroup('{{ RuleGroup.id }}')" class="btn-action" title="设置/取消默认">
+              {% if RuleGroup.default == 'Y' %}
+              <span class="text-purple">{{ SVG.star('icon-filled') }}</span>
+              {% else %}
+              {{ SVG.star() }}
+              {% endif %}
+            </a>
+            <a href="javascript:show_add_filterrule_modal('{{ RuleGroup.id }}', '{{ RuleGroup.name }}')"
+              class="btn-action" title="增加规则">
+              {{ SVG.plus() }}
+            </a>
+            <a href="javascript:del_filtergroup_modal('{{ RuleGroup.id }}', '{{ RuleGroup.name }}')" class="btn-action"
+              title="删除规则组">
+              {{ SVG.x() }}
+            </a>
           </div>
-        {% endfor %}
+        </div>
+        <div class="card-body p-2" id="card_{{ RuleGroup.id }}">
+          <div class="row row-cards">
+            {% if RuleGroup.rules %}
+            {% for Rule in RuleGroup.rules %}
+            <div class="col-12">
+              <a class="card card-link card-link-pop card-borderless"
+                href="javascript:show_modify_filterrule_modal('{{ RuleGroup.id }}', '{{ Rule.id }}', '{{ RuleGroup.name }}')"
+                title="编辑规则">
+                <div class="card-body p-2">
+                  <h3 class="card-title">{{ Rule.name }}</h3>
+                  <div class="w-100">
+                    {% if Rule.free_text %}
+                    <span class="badge bg-info me-1 mb-1 text-wrap text-start" title="促销"
+                      style='word-break: break-all'>{{ Rule.free_text }}</span>
+                    {% endif %}
+                    {% for include in Rule.include %}
+                    <span class="badge badge-outline text-info me-1 mb-1 text-wrap text-start" title="包含规则"
+                      style='word-break: break-all'>包含: {{ include }}</span>
+                    {% endfor %}
+                    {% for exclude in Rule.exclude %}
+                    <span class="badge badge-outline text-red me-1 mb-1 text-wrap text-start" title="排除规则"
+                      style='word-break: break-all'>排除: {{ exclude }}</span>
+                    {% endfor %}
+                    {% if Rule.size %}
+                    <span class="badge badge-outline text-orange me-1 mb-1 text-wrap text-start" title="大小限制"
+                      style='word-break: break-all'>大小: {{ Rule.size }}</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </a>
+            </div>
+            {% endfor %}
+            {% else %}
+            {{ OOPS.empty('没有规则', '请点击"+"添加规则。') }}
+            {% endif %}
+          </div>
+        </div>
       </div>
+      {% endfor %}
     </div>
   </div>
+</div>
 {% else %}
-  {{ OOPS.empty('没有规则', '没有配置任何规则，请点击“新增规则组“按钮。') }}
+{{ OOPS.empty('没有规则', '没有配置任何规则，请点击“新增规则组“按钮。') }}
 {% endif %}
 <div class="modal modal-blur fade" id="modal-add-filterrule" tabindex="-1" role="dialog" aria-hidden="true"
-     data-bs-backdrop="static" data-bs-keyboard="false">
+  data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modal-filterrule-title">新增规则</h5>
-        <input type="hidden" id="filterrule_id"/>
-        <input type="hidden" id="filtergroup_id"/>
+        <input type="hidden" id="filterrule_id" />
+        <input type="hidden" id="filtergroup_id" />
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" style="overflow-x: hidden">
@@ -133,9 +140,8 @@
           </div>
           <div class="col-lg-6">
             <div class="mb-3">
-              <label class="form-label">优先级 <span class="form-help"
-                                                     title="同一个规则组内，规则优先级的数值越小优先级越高"
-                                                     data-bs-toggle="tooltip">?</span></label>
+              <label class="form-label">优先级 <span class="form-help" title="同一个规则组内，规则优先级的数值越小优先级越高"
+                  data-bs-toggle="tooltip">?</span></label>
               <select class="form-select" id="rule_pri">
                 <option value="1" selected>1</option>
                 <option value="2">2</option>
@@ -165,19 +171,17 @@
           <div class="col-lg-6">
             <div class="mb-3">
               <label class="form-label">包含规则 <span class="form-help"
-                                                       title="只有种子标题或副标题中包括这些关键字或匹配正式表达式才会命中；对大小写不敏感，配置为空为不启用该规则；可以配置多行，多行之间是【与】的关系，即多行条件都包含时才会命中，单行内可以用'|'来表示【或】，即包括其一即命中"
-                                                       data-bs-toggle="tooltip">?</span></label>
-              <textarea class="form-control" id="rule_include" rows="4"
-                        placeholder="必须包含的关键字或正则表达式"></textarea>
+                  title="只有种子标题或副标题中包括这些关键字或匹配正式表达式才会命中；对大小写不敏感，配置为空为不启用该规则；可以配置多行，多行之间是【与】的关系，即多行条件都包含时才会命中，单行内可以用'|'来表示【或】，即包括其一即命中"
+                  data-bs-toggle="tooltip">?</span></label>
+              <textarea class="form-control" id="rule_include" rows="4" placeholder="必须包含的关键字或正则表达式"></textarea>
             </div>
           </div>
           <div class="col-lg-6">
             <div class="mb-3">
               <label class="form-label">排除规则 <span class="form-help"
-                                                       title="种子标题或副标题中如果有这些关键字或匹配正式表达式则会被跳过；对大小写不敏感，不能带引号，配置为空为不启用该规则；可以配置多行，多行之间是【与】的关系，即多行条件都不包含时才会跳过，单行内可以用'|'来表示【或】，即包括其一即跳过"
-                                                       data-bs-toggle="tooltip">?</span></label>
-              <textarea class="form-control" id="rule_exclude" rows="4"
-                        placeholder="不能包含的关键字或正则表达式"></textarea>
+                  title="种子标题或副标题中如果有这些关键字或匹配正式表达式则会被跳过；对大小写不敏感，不能带引号，配置为空为不启用该规则；可以配置多行，多行之间是【与】的关系，即多行条件都不包含时才会跳过，单行内可以用'|'来表示【或】，即包括其一即跳过"
+                  data-bs-toggle="tooltip">?</span></label>
+              <textarea class="form-control" id="rule_exclude" rows="4" placeholder="不能包含的关键字或正则表达式"></textarea>
             </div>
           </div>
         </div>
@@ -185,16 +189,15 @@
           <div class="col-lg-6">
             <div class="mb-3">
               <label class="form-label">大小限制(GB) <span class="form-help"
-                                                           title="只有满足大小限制的种子文件才会被命中，单位是GB，如果是剧集则是指的单集大小（多集时按集数折算）；不配置则不启用该条件；如只配置1个数字表示小于等于该大小的才会被命中；如配置2个数字(使用英文逗号分隔)表示在中间大小的才会被命中"
-                                                           data-bs-toggle="tooltip">?</span></label>
+                  title="只有满足大小限制的种子文件才会被命中，单位是GB，如果是剧集则是指的单集大小（多集时按集数折算）；不配置则不启用该条件；如只配置1个数字表示小于等于该大小的才会被命中；如配置2个数字(使用英文逗号分隔)表示在中间大小的才会被命中"
+                  data-bs-toggle="tooltip">?</span></label>
               <input type="text" class="form-control" id="rule_sizelimit" value="" placeholder="限制文件大小，单位GB">
             </div>
           </div>
           <div class="col-lg-6">
             <div class="mb-3">
-              <label class="form-label">促销 <span class="form-help"
-                                                   title="只有满足促销条件的种子才会被命中，免费包括2X免费"
-                                                   data-bs-toggle="tooltip">?</span></label>
+              <label class="form-label">促销 <span class="form-help" title="只有满足促销条件的种子才会被命中，免费包括2X免费"
+                  data-bs-toggle="tooltip">?</span></label>
               <select class="form-select" id="rule_free">
                 <option value="" selected>全部</option>
                 <option value="1.0 1.0">普通</option>
@@ -205,24 +208,24 @@
           </div>
         </div>
         {% for Init_RuleGroup in Init_RuleGroups %}
-          {% if Init_RuleGroup.rules %}
-            <div class="row mb-3">
-              <details>
-                <summary class="summary">
-                  模板-{{ Init_RuleGroup.name }}
-                </summary>
-                <div class="form-selectgroup">
-                  {% for Rule in Init_RuleGroup.rules %}
-                    <label class="form-selectgroup-item">
-                      <input type="button" value="{{ Rule | safe }}" class="form-selectgroup-input"
-                             onclick="apply_templated(this)">
-                      <span class="form-selectgroup-label">{{ Rule.name }}</span>
-                    </label>
-                  {% endfor %}
-                </div>
-              </details>
+        {% if Init_RuleGroup.rules %}
+        <div class="row mb-3">
+          <details>
+            <summary class="summary">
+              模板-{{ Init_RuleGroup.name }}
+            </summary>
+            <div class="form-selectgroup">
+              {% for Rule in Init_RuleGroup.rules %}
+              <label class="form-selectgroup-item">
+                <input type="button" value="{{ Rule | safe }}" class="form-selectgroup-input"
+                  onclick="apply_templated(this)">
+                <span class="form-selectgroup-label">{{ Rule.name }}</span>
+              </label>
+              {% endfor %}
             </div>
-          {% endif %}
+          </details>
+        </div>
+        {% endif %}
         {% endfor %}
       </div>
       <div class="modal-footer">
@@ -237,7 +240,7 @@
   </div>
 </div>
 <div class="modal modal-blur fade" id="modal-add-filtergroup" tabindex="-1" role="dialog" aria-hidden="true"
-     data-bs-backdrop="static" data-bs-keyboard="false">
+  data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -246,12 +249,23 @@
       </div>
       <div class="modal-body">
         <div class="row">
-          <div class="col">
+          <div class="col-lg-6">
             <div class="mb-3">
               <label class="form-label required">规则组名称 <span class="form-help"
-                                                                  title="规则组为规则使用的基本单位，一个规则组中可以包含多条规则，按优先级依次匹配，给规则组设定个名称以便于选择使用"
-                                                                  data-bs-toggle="tooltip">?</span></label>
+                  title="规则组为规则使用的基本单位，一个规则组中可以包含多条规则，按优先级依次匹配，给规则组设定个名称以便于选择使用"
+                  data-bs-toggle="tooltip">?</span></label>
               <input type="text" class="form-control" id="rulegroup_name" placeholder="别名">
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="mb-3">
+              <label class="form-label">规则组类型 <span class="form-help" title="用于分别过滤下载质量和文件同步"
+                  data-bs-toggle="tooltip">?</span></label>
+              <select class="form-select" id="rulegroup_type">
+                <option value="" selected>全部</option>
+                <option value="video">下载</option>
+                <option value="sync">同步</option>
+              </select>
             </div>
           </div>
         </div>
@@ -260,10 +274,9 @@
             <div class="mb-3">
               <label class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="rulegroup_default"
-                       onclick="change_over_edition_check(this)">
-                <span class="form-check-label">默认 <span class="form-help"
-                                                          title="将该规则组设为默认规则，在远程搜索、订阅等未指定规则组的场景下默认使用"
-                                                          data-bs-toggle="tooltip">?</span></span>
+                  onclick="change_over_edition_check(this)">
+                <span class="form-check-label">默认 <span class="form-help" title="将该规则组设为默认规则，在远程搜索、订阅等未指定规则组的场景下默认使用"
+                    data-bs-toggle="tooltip">?</span></span>
               </label>
             </div>
           </div>
@@ -281,7 +294,7 @@
   </div>
 </div>
 <div class="modal modal-blur fade" id="modal-restore-filtergroup" tabindex="-1" role="dialog" aria-hidden="true"
-     data-bs-backdrop="static" data-bs-keyboard="false">
+  data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -291,11 +304,10 @@
       <div class="modal-body">
         <div class="form-selectgroup">
           {% for Init_RuleGroup in Init_RuleGroups %}
-            <label class="form-selectgroup-item">
-              <input type="checkbox" name="init_rulegroup" value="{{ Init_RuleGroup.id }}"
-                     class="form-selectgroup-input">
-              <span class="form-selectgroup-label">{{ Init_RuleGroup.name }}</span>
-            </label>
+          <label class="form-selectgroup-item">
+            <input type="checkbox" name="init_rulegroup" value="{{ Init_RuleGroup.id }}" class="form-selectgroup-input">
+            <span class="form-selectgroup-label">{{ Init_RuleGroup.name }}</span>
+          </label>
           {% endfor %}
         </div>
       </div>
@@ -311,7 +323,7 @@
   </div>
 </div>
 <div class="modal modal-blur fade" id="modal-share-filtergroup" tabindex="-1" role="dialog" aria-hidden="true"
-     data-bs-backdrop="static" data-bs-keyboard="false">
+  data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -319,9 +331,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <label class="form-label required">规则内容 <span class="form-help"
-                                                          title="复制以下内容分享给他人，获得分享后使用规则导入功能导入分享规则"
-                                                          data-bs-toggle="tooltip">?</span></label>
+        <label class="form-label required">规则内容 <span class="form-help" title="复制以下内容分享给他人，获得分享后使用规则导入功能导入分享规则"
+            data-bs-toggle="tooltip">?</span></label>
         <pre id="share_filtergroup_code">
           </pre>
       </div>
@@ -334,7 +345,7 @@
   </div>
 </div>
 <div class="modal modal-blur fade" id="modal-import-filtergroup" tabindex="-1" role="dialog" aria-hidden="true"
-     data-bs-backdrop="static" data-bs-keyboard="false">
+  data-bs-backdrop="static" data-bs-keyboard="false">
   <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -354,15 +365,26 @@
     </div>
   </div>
 </div>
+
+<style>
+  .card-collapse {
+    overflow: hidden;
+    height: 0px;
+  }
+</style>
+
 <script type="text/javascript">
+
+
   // 打开新增规则表窗口
-  function show_add_filtergroup_modal() {
+  function show_add_filtergroup_modal () {
     $("#rulegroup_name").val('');
+    $("#rulegroup_type").val('');
     $("#modal-add-filtergroup").modal('show');
   }
 
   // 打开新增规则窗口
-  function show_add_filterrule_modal(groupid, groupname) {
+  function show_add_filterrule_modal (groupid, groupname) {
     $("#modal-filterrule-title").text("新增规则：" + groupname);
     $("#filtergroup_id").val(groupid);
     $("#filterrule_id").val('');
@@ -380,12 +402,12 @@
   }
 
   // 打开恢复初始规则窗口
-  function show_restore_filtergroup_modal() {
+  function show_restore_filtergroup_modal () {
     $("#modal-restore-filtergroup").modal('show');
   }
 
   // 恢复初始规则
-  function restore_filtergroup() {
+  function restore_filtergroup () {
     let init_rulegroups = {{ Init_RuleGroups | safe }};
     let need_init_groupid = select_GetSelectedVAL("init_rulegroup");
     $("#restore_rulegroup_btn").text("恢复中").attr("disabled", true);
@@ -399,19 +421,31 @@
   }
 
   // 设置默认规则组
-  function set_default_filtergroup(id) {
-    ajax_post("set_default_filtergroup", {"id": id}, function (ret) {
+  function set_default_filtergroup (id) {
+    ajax_post("set_default_filtergroup", { "id": id }, function (ret) {
       window_history_refresh();
     });
   }
 
+  function set_filtergroup_collapse (id) {
+    const collapse = $(`#collapse_${id}`).val();
+    if (collapse == '0') {
+      $(`#collapse_${id}`).val('1')
+      $(`#card_${id}`).addClass("card-collapse");
+      return;
+    } else {
+      $(`#collapse_${id}`).val('0')
+      $(`#card_${id}`).removeClass("card-collapse");
+    }
+  }
+
   //修改规则
-  function show_modify_filterrule_modal(groupid, ruleid, groupname) {
+  function show_modify_filterrule_modal (groupid, ruleid, groupname) {
     $("#modal-filterrule-title").text("编辑规则：" + groupname);
     $("#filterrule_id").val(ruleid);
     $("#filtergroup_id").val(groupid);
     //获取数据
-    ajax_post("filterrule_detail", {"ruleid": ruleid, "groupid": groupid}, function (ret) {
+    ajax_post("filterrule_detail", { "ruleid": ruleid, "groupid": groupid }, function (ret) {
       if (ret.info) {
         $("#rule_name").val(ret.info.name);
         $("#rule_pri").val(ret.info.pri);
@@ -429,7 +463,7 @@
   }
 
   // 新增规则组
-  function add_filtergroup() {
+  function add_filtergroup () {
     const name = $("#rulegroup_name").val();
     if (!name) {
       $("#rulegroup_name").addClass("is-invalid");
@@ -437,13 +471,16 @@
     } else {
       $("#rulegroup_name").removeClass("is-invalid");
     }
+
+    const type = $("#rulegroup_type").val();
+
     let is_default;
     if ($("#rulegroup_default").prop("checked")) {
       is_default = 'Y';
     } else {
       is_default = 'N';
     }
-    const params = {"name": name, "default": is_default};
+    const params = { "name": name, "default": is_default, 'type': type };
     ajax_post("add_filtergroup", params, function (ret) {
       if (ret.code == 0) {
         $("#modal-add-filtergroup").modal('hide');
@@ -453,17 +490,17 @@
   }
 
   //删除规则组
-  function del_filtergroup_modal(id, name) {
+  function del_filtergroup_modal (id, name) {
     show_confirm_modal("删除规则组后，该组下所有的规则将会同时被删除，是否确认删除 " + name + " ？", function () {
       hide_confirm_modal();
-      ajax_post("del_filtergroup", {"id": id}, function (ret) {
+      ajax_post("del_filtergroup", { "id": id }, function (ret) {
         window_history_refresh();
       });
     });
   }
 
   // 新增规则
-  function add_filterrule() {
+  function add_filterrule () {
     const rule_id = $("#filterrule_id").val();
     const group_id = $("#filtergroup_id").val();
     const rule_name = $("#rule_name").val();
@@ -503,8 +540,8 @@
   }
 
   // 删除规则
-  function delete_filterrule(id) {
-    const params = {"id": id};
+  function delete_filterrule (id) {
+    const params = { "id": id };
     ajax_post("del_filterrule", params, function (ret) {
       $("#modal-add-filterrule").modal('hide');
       window_history_refresh();
@@ -512,7 +549,7 @@
   }
 
   // 应用规则模板
-  function apply_templated(item) {
+  function apply_templated (item) {
     let rule = item.value.replace(/'/g, "\"");
     rule = rule.replace(/None/g, "\"\"");
     rule = JSON.parse(rule)
@@ -522,8 +559,8 @@
   }
 
   //分计规则组
-  function share_filtergroup(id) {
-    ajax_post("share_filtergroup", {"id": id}, function (ret) {
+  function share_filtergroup (id) {
+    ajax_post("share_filtergroup", { "id": id }, function (ret) {
       if (ret.code == 0) {
         $("#share_filtergroup_code").text(ret.string);
         $("#modal-share-filtergroup").modal('show');
@@ -534,19 +571,19 @@
   }
 
   //显示导入规则组框
-  function show_import_filtergroup_modal() {
+  function show_import_filtergroup_modal () {
     $("#import_filtergroup_code").val("");
     $("#modal-import-filtergroup").modal('show');
   }
 
   //导入编规则组
-  function import_filtergroup() {
+  function import_filtergroup () {
     const content = $("#import_filtergroup_code").val();
     if (!content) {
       return;
     }
     $("#modal-import-filtergroup").modal('hide');
-    ajax_post("import_filtergroup", {"content": content}, function (ret) {
+    ajax_post("import_filtergroup", { "content": content }, function (ret) {
       if (ret.code == 0) {
         window_history_refresh();
       } else {

@@ -454,6 +454,7 @@ def update_config():
                                                       unknown=SyncPath['unknown'],
                                                       mode=SyncPath['syncmod'],
                                                       rename=SyncPath['rename'],
+                                                      domain="tmdb",
                                                       enabled=SyncPath['enabled'])
             else:
                 _dbhelper.insert_config_sync_path(source=sync_paths,
@@ -461,6 +462,7 @@ def update_config():
                                                   unknown="",
                                                   mode=rmt_mode,
                                                   rename=1,
+                                                  domain="tmdb",
                                                   enabled=0)
             _config['sync'].pop('sync_path')
             overwrite_cofig = True
