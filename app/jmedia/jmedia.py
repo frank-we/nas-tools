@@ -36,7 +36,7 @@ class JavMedia:
         for file_path in file_list:
             count += 1
             try:
-                fileName, _ = os.path.splitext(os.path.basename(file_path))
+                fileName = os.path.basename(file_path)
                 jMeta = JMeta(fileName)
                 log.info("【Rmt】Making Data for [" + file_path +
                          "], the number is [" + jMeta.get_number() + "]")
