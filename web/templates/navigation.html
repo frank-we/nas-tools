@@ -565,7 +565,7 @@
         </div>
         <label class="form-label">类型</label>
         <div class="form-selectgroup-boxes row mb-3">
-          <div class="col-lg-4">
+          <div class="col-lg-3">
             <div class="mb-1">
               <label class="form-selectgroup-item">
                 <input type="radio" id="rename_type_mov" name="rename_type" value="MOV" class="form-selectgroup-input"
@@ -581,7 +581,7 @@
               </label>
             </div>
           </div>
-          <div class="col-lg-4">
+          <div class="col-lg-3">
             <div class="mb-1">
               <label class="form-selectgroup-item">
                 <input type="radio" id="rename_type_tv" name="rename_type" value="TV" class="form-selectgroup-input">
@@ -596,7 +596,7 @@
               </label>
             </div>
           </div>
-          <div class="col-lg-4">
+          <div class="col-lg-3">
             <div class="mb-1">
               <label class="form-selectgroup-item">
                 <input type="radio" id="rename_type_anime" name="rename_type" value="ANIME"
@@ -612,14 +612,30 @@
               </label>
             </div>
           </div>
+          <div class="col-lg-3">
+            <div class="mb-1">
+              <label class="form-selectgroup-item">
+                <input type="radio" id="rename_type_jav" name="rename_type" value="JAV"
+                       class="form-selectgroup-input">
+                <span class="form-selectgroup-label d-flex align-items-center p-3">
+                    <span class="me-3">
+                      <span class="form-selectgroup-check"></span>
+                    </span>
+                    <span class="form-selectgroup-label-content">
+                      <span class="form-selectgroup-title strong mb-1">jav</span>
+                    </span>
+                  </span>
+              </label>
+            </div>
+          </div>
         </div>
         <div class="row">
           <div class="col-lg-4">
             <div class="mb-3">
-              <label class="form-label">TMDB ID</label>
+              <label class="form-label" id="id_label">TMDB ID</label>
               <div class="input-group">
                 <input type="text" id="rename_tmdb" class="form-control" placeholder="留空自动识别">
-                <button class="btn" type="button" onclick="show_search_tmdbid_modal('rename_tmdb', 'modal-media-identification')">查询</button>
+                <button id="tmdb_btn" class="btn" type="button" onclick="show_search_tmdbid_modal('rename_tmdb', 'modal-media-identification')">查询</button>
               </div>
             </div>
           </div>
@@ -1864,7 +1880,7 @@
 
   // 显示手动识别转移框
   // manual_type: 1-未识别手动识别，2-历史记录手动识别，3-自定义识别
-  // media_type: 电影，电视剧，动漫
+  // media_type: 电影，电视剧，动漫，jav
   function show_manual_transfer_modal(manual_type, inpath, syncmod, media_type, unknown_id, transferlog_id) {
     // 初始化类型
     if (!syncmod) {
@@ -1897,23 +1913,30 @@
       $("#transferlog_id").val(transferlog_id);
     }
 
+    $("#rename_type_tv").removeProp("checked");
+    $("#rename_type_mov").removeProp("checked");
+    $("#rename_type_anime").removeProp("checked");
+    $("#rename_type_jav").removeProp("checked");
+    $("#tmdb_btn").show();
+    $("#id_label").text("TMDB ID");
     // 初始化媒体类型
     if (media_type === "电视剧") {
       $("#rename_type_tv").prop("checked", true);
-      $("#rename_type_mov").removeProp("checked");
-      $("#rename_type_anime").removeProp("checked");
       $("#rename_season_div").show();
       $("#rename_episode_div").show();
     } else if (media_type === "动漫") {
       $("#rename_type_anime").prop("checked", true);
-      $("#rename_type_tv").removeProp("checked");
-      $("#rename_type_mov").removeProp("checked");
       $("#rename_season_div").show();
       $("#rename_episode_div").show();
+    } else if (media_type === "jav") {
+      $("#rename_type_jav").prop("checked", true);
+      $("#rename_season_div").hide();
+      $("#rename_episode_div").hide();
+      $("#rename_season").val("");
+      $("#id_label").text("番号");
+      $("#tmdb_btn").hide();
     } else {
       $("#rename_type_mov").prop("checked", true);
-      $("#rename_type_tv").removeProp("checked");
-      $("#rename_type_anime").removeProp("checked");
       $("#rename_season_div").hide();
       $("#rename_episode_div").hide();
       $("#rename_season").val("");
@@ -1945,6 +1968,8 @@
   }
 
   // 执行手动识别转移
+  // manual_type: 1-未识别手动识别，2-历史记录手动识别，3-自定义识别
+  // media_type: 电影，电视剧，动漫，jav
   function manual_media_transfer() {
     let syncmod;
     const source = $("#rename_source").val();
@@ -2434,7 +2459,13 @@
 
     // 单选框事件
     $('input[type=radio][name=rename_type]').change(function () {
-      if (this.value === 'MOV') {
+      $("#id_label").text("TMDB ID");
+      $("#tmdb_btn").show();
+      if (this.value === 'MOV' || this.value === 'JAV') {
+        if (this.value === 'JAV') {
+          $("#id_label").text("番号");
+          $("#tmdb_btn").hide();
+        }
         $("#rename_season_div").hide();
         $("#rename_episode_div").hide();
         $("#rename_season").val('');

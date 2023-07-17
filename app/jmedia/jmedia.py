@@ -16,12 +16,12 @@ class JavMedia:
     def __init__(self):
         self.config = Config().get_config('jav')
 
-    def get_media_info_on_files(self, file_list, chinese=True):
+    def get_media_info_on_files(self, file_list, number=None):
         """
         根据文件清单，搜刮TMDB信息，用于文件名称的识别
         :param file_list: 文件清单，如果是列表也可以是单个文件，也可以是一个目录
         :param in_path: 转移的路径，可能是一个文件也可以是一个目录
-        :param chinese: 原标题为英文时是否从别名中检索中文名称
+        :param number: 番号
         :return: 带有TMDB信息的每个文件对应的MetaInfo对象字典
         """
         count = 0
@@ -37,7 +37,7 @@ class JavMedia:
             count += 1
             try:
                 fileName = os.path.basename(file_path)
-                jMeta = JMeta(fileName)
+                jMeta = JMeta(fileName, number=number)
                 log.info("【Rmt】Making Data for [" + file_path +
                          "], the number is [" + jMeta.get_number() + "]")
                 result = self.Core_Main(filepath=file_path,

@@ -603,7 +603,12 @@ class FileTransfer:
         Medias = None
         if domain == 'jav':
             log.info("【Rmt】当前为JAV刮削")
-            Medias = self.jmedia.get_media_info_on_files(file_list)
+            if tmdb_info:
+                Medias = self.jmedia.get_media_info_on_files(
+                    file_list, number=tmdb_info.get_number())
+            else:
+
+                Medias = self.jmedia.get_media_info_on_files(file_list)
         else:
             #  过滤掉文件列表
             file_list, msg = self.check_ignore(file_list=file_list)

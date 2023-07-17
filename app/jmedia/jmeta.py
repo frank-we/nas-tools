@@ -61,7 +61,7 @@ class JMeta(object):
     # 其它信息
     jav_info = {}
 
-    def __init__(self, title, subtitle=None, fileflag=False):
+    def __init__(self, title, subtitle=None, number=None, fileflag=False):
         if not title:
             return
 
@@ -72,7 +72,7 @@ class JMeta(object):
         if subtitle:
             subtitle, _, _ = WordsHelper().process(subtitle)
 
-        self.number = getNumber(title)
+        self.number = number if number else getNumber(title)
         self.title = title
         self.subtitle = subtitle
         self.fileflag = fileflag
@@ -91,6 +91,10 @@ class JMeta(object):
             else:
                 str = title
         return str
+
+    def set_number(self, number):
+        self.number = number
+        return self
 
     def get_number(self):
         return self.number

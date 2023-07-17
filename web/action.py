@@ -24,6 +24,7 @@ from app.filter import Filter
 from app.helper import DbHelper, ProgressHelper, ThreadHelper, \
     MetaHelper, DisplayHelper, WordsHelper, CookieCloudHelper
 from app.indexer import Indexer
+from app.jmedia import JMeta
 from app.media import Category, Media, Bangumi, DouBan
 from app.media.meta import MetaInfo, MetaBase
 from app.mediaserver import MediaServer
@@ -838,6 +839,8 @@ class WebAction:
             media_type = MediaType.MOVIE
         elif mtype in TvTypes:
             media_type = MediaType.TV
+        elif mtype == 'JAV':
+            media_type = MediaType.JAV
         else:
             media_type = MediaType.ANIME
         # 开始转移
@@ -877,9 +880,15 @@ class WebAction:
             outpath = os.path.normpath(outpath)
         if not os.path.exists(inpath):
             return False, "输入路径不存在"
+
+        domain = 'jav' if media_type == MediaType.JAV else 'tmdb'
         if tmdbid:
             # 有输入TMDBID
-            tmdb_info = Media().get_tmdb_info(mtype=media_type, tmdbid=tmdbid)
+            if (media_type == MediaType.JAV):
+                tmdb_info = JMeta('')
+                tmdb_info.set_number(number=tmdbid)
+            else:
+                tmdb_info = Media().get_tmdb_info(mtype=media_type, tmdbid=tmdbid)
             if not tmdb_info:
                 return False, "识别失败，无法查询到TMDB信息"
             # 按识别的信息转移
@@ -891,6 +900,7 @@ class WebAction:
                 tmdb_info=tmdb_info,
                 media_type=media_type,
                 season=season,
+                domain=domain,
                 episode=(EpisodeFormat(episode_format, episode_details,
                                        episode_offset), need_fix_all),
                 min_filesize=min_filesize,
@@ -906,6 +916,7 @@ class WebAction:
                 episode=(EpisodeFormat(episode_format, episode_details,
                                        episode_offset), need_fix_all),
                 min_filesize=min_filesize,
+                domain=domain,
                 udf_flag=True)
         return succ_flag, ret_msg
 

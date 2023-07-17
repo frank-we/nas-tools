@@ -37,9 +37,7 @@ class RequestUtils:
                 "User-Agent": Config().get_ua()
             }
         if referer:
-            self._headers.update({
-                "referer": referer
-            })
+            self._headers.update({"referer": referer})
         if cookies:
             if isinstance(cookies, str):
                 self._cookies = self.cookie_parse(cookies)
@@ -47,6 +45,8 @@ class RequestUtils:
                 self._cookies = cookies
         if proxies:
             self._proxies = proxies
+        else:
+            self._proxies = Config().get_proxies()
         if session:
             self._session = session
         if timeout:
@@ -118,7 +118,12 @@ class RequestUtils:
         except requests.exceptions.RequestException:
             return None
 
-    def post_res(self, url, params=None, allow_redirects=True, files=None, json=None):
+    def post_res(self,
+                 url,
+                 params=None,
+                 allow_redirects=True,
+                 files=None,
+                 json=None):
         try:
             if self._session:
                 return self._session.post(url,
