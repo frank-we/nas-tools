@@ -4,6 +4,7 @@ from time import sleep
 import log
 
 from app.utils.types import JavDomainType
+from app.utils import ExceptionUtils
 from config import Config
 from .jmeta import JMeta
 from app.jmedia.Function.Function import get_info, getDataFromJSON, escapePath, getNumber
@@ -44,15 +45,14 @@ class JavMedia:
                                         jMeta=jMeta,
                                         jav_site=jav_site,
                                         domain=jav_domain)
-                return_media_infos[file_path] = result
-                log.info(
-                    "【Rmt】======================================================"
-                )
+                if (result.get_title_string()):
+                    return_media_infos[file_path] = result
+                else:
+                    log.warn(r'【Rmt】%s 刮削失败！' % fileName)
             except Exception as error_info:
                 log.error('【Rmt】Error in AVDC_Main: ' + str(error_info))
-                log.info(
-                    "【Rmt】======================================================"
-                )
+                ExceptionUtils.exception_traceback(error_info)
+
         return return_media_infos
 
     def Core_Main(self, filepath, jMeta, jav_site, domain, appoint_url=''):
