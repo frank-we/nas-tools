@@ -11,3 +11,6 @@ test.py
 *.ipr
 out/
 gen/
+/config/media.db
+/config/user.db
+/config/config.yaml

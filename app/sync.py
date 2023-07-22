@@ -187,7 +187,7 @@ class Sync(object):
             try:
                 if not os.path.exists(event_path):
                     return
-                log.debug("【Sync】文件%s：%s" % (text, event_path))
+                log.info("【Sync】文件%s：%s" % (text, event_path))
                 # 判断是否处理过了
                 need_handler_flag = False
                 try:
@@ -198,7 +198,7 @@ class Sync(object):
                 finally:
                     lock.release()
                 if not need_handler_flag:
-                    log.debug("【Sync】文件已处理过：%s" % event_path)
+                    log.info("【Sync】文件已处理过：%s" % event_path)
                     return
                 # 不是监控目录下的文件不处理
                 is_monitor_file = False

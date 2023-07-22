@@ -1301,8 +1301,8 @@ class FileTransfer:
             title=list[1], gid=customWordGroupId)
         if flag:
             return os.path.join(list[0], result), True
-        else:
-            log.warn("【Sync】%s" % msg)
+        elif not flag and msg:
+            log.warn("【Sync】自定义识别失败 %s" % msg)
             return path, False
 
     def link_sync_file(self, src_path, in_file, target_dir, sync_transfer_mode,
