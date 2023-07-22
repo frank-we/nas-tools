@@ -221,7 +221,7 @@ def getOutlineScore(number):  # 获取简介
     return outline, score
 
 
-def main(number, appoint_url, isuncensored=False):
+def main(number, appoint_url, isuncensored=False, domain=''):
     try:
         if appoint_url == '':
             # ========================================================================搜索番号
@@ -342,7 +342,7 @@ def main(number, appoint_url, isuncensored=False):
     return js
 
 
-def main_us(number, appoint_url=''):
+def main_us(number, appoint_url='', domain=''):
     try:
         if appoint_url:
             result_url = appoint_url

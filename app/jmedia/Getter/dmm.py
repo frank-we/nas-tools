@@ -220,7 +220,7 @@ def getPublisher(htmlcode):
     return result
 
 
-def main(number, appoint_url=''):
+def main(number, appoint_url='', domain=''):
     # fanza allow letter + number + underscore, normalize the input here
     # @note: I only find the usage of underscore as h_test123456789
     fanza_search_number = number

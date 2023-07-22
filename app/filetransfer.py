@@ -1299,11 +1299,11 @@ class FileTransfer:
         list = os.path.split(path)
         result, msg, flag = self.wordsHelper.processByGid(
             title=list[1], gid=customWordGroupId)
-        if flag:
-            return os.path.join(list[0], result), True
-        elif not flag and msg:
+        if not flag and msg:
             log.warn("【Sync】自定义识别失败 %s" % msg)
             return path, False
+        else:
+            return os.path.join(list[0], result), True
 
     def link_sync_file(self, src_path, in_file, target_dir, sync_transfer_mode,
                        customWordGroupId):

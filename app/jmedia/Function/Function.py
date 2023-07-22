@@ -79,7 +79,7 @@ def getNumber(filepath):
     """
     获取番号
     """
-    filepath = filepath.replace('-C.', '.').replace('-c.', '.')
+    filepath = re.sub(r'-?(c|C)\.', '.', filepath)
     filename = os.path.splitext(filepath.split('/')[-1])[0]
     part = ''
     if re.search('-CD\d+', filename):

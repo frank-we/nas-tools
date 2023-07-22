@@ -28,10 +28,11 @@ class JavMedia:
         count = 0
         jav_domain = str(self.config.get('jav_domain'))
         jav_site = str(self.config.get('jav_site'))
-        if 'http' not in jav_domain.lower():
-            jav_domain = r"https://%s" % jav_domain
-        if "/" == jav_domain[-1]:
-            jav_domain = jav_domain[:-1]
+        if jav_domain:
+            if 'http' not in jav_domain.lower():
+                jav_domain = r"https://%s" % jav_domain
+            if "/" == jav_domain[-1]:
+                jav_domain = jav_domain[:-1]
 
         return_media_infos = {}
         for file_path in file_list:

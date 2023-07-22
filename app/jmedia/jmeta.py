@@ -2,8 +2,11 @@ from app.helper import WordsHelper
 from app.jmedia.Function.Function import getNumber
 from app.utils.types import MediaType
 
+import re
+
 
 class JMeta(object):
+    _part_re = r"(PART[0-9ABI]{0,2}|CD[0-9]{0,2}|DVD[0-9]{0,2}|DISK[0-9]{0,2}|DISC[0-9]{0,2})"
     """
     媒体信息基类
     """
@@ -50,6 +53,8 @@ class JMeta(object):
     director = None
     # 演员
     actor = None
+    # 分集
+    part = None
     # 标签
     tag = None
     # 封面图片
@@ -66,6 +71,10 @@ class JMeta(object):
             return
 
         self.org_string = title
+
+        re_res = re.search(r"%s" % self._part_re, title, re.IGNORECASE)
+        if re_res:
+            self.part = re_res.group(1)
 
         # 应用自定义识别词
         title, _, _ = WordsHelper().process(title)

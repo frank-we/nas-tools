@@ -168,7 +168,7 @@ def find_number(number, appoint_url):
     return 'not found', ''
 
 
-def main(number, appoint_url):
+def main(number, appoint_url, domain=''):
     try:
         url, detail_page = find_number(number, appoint_url)
         if url == 'not found':

@@ -131,7 +131,7 @@ def getUrl(number):
     return 0, response, ''
 
 
-def main(number, appoint_url=''):
+def main(number, appoint_url='', domain=''):
     try:
         count, response, url = getUrl(number)
         if str(response) == 'ProxyError':

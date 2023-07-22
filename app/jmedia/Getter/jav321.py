@@ -119,7 +119,7 @@ def getOutline(detail_page):
                 " ['']")
 
 
-def main(number, appoint_url, isuncensored=False):
+def main(number, appoint_url, isuncensored=False, domain=''):
     try:
         result_url = "https://www.jav321.com/search"
         if appoint_url != '':

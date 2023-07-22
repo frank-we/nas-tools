@@ -247,10 +247,11 @@ def find_number(number, domain):
 
 def main(number, appoint_url, domain):
     try:
+        domainCover = domain if domain else 'https://www.javbus.com'
         if appoint_url:
             result_url = appoint_url
         else:
-            result_url = find_number(number, domain)
+            result_url = find_number(number, domainCover)
         if result_url == 'not found':
             raise Exception('Movie Data not found in javbus.main!')
         htmlcode = get_html(result_url)
@@ -283,7 +284,7 @@ def main(number, appoint_url, domain):
             'number':
             number,
             'cover':
-            getCover(htmlcode, domain),
+            getCover(htmlcode, domainCover),
             'extrafanart':
             getExtraFanart(htmlcode),
             'imagecut':
@@ -293,7 +294,7 @@ def main(number, appoint_url, domain):
             'series':
             getSeries(htmlcode),
             'actor_photo':
-            getActorPhoto(htmlcode, domain),
+            getActorPhoto(htmlcode, domainCover),
             'website':
             result_url,
             'source':
@@ -322,9 +323,10 @@ def main(number, appoint_url, domain):
 
 def main_uncensored(number, appoint_url, domain):
     try:
+        domainCover = domain if domain else 'https://www.javbus.com'
         result_url = ''
         if appoint_url == '':
-            result_url = find_number(number, domain)
+            result_url = find_number(number, domainCover)
         else:
             result_url = appoint_url
         if result_url == 'not found':
@@ -361,7 +363,7 @@ def main_uncensored(number, appoint_url, domain):
             'number':
             getNum(htmlcode),
             'cover':
-            getCover(htmlcode, domain),
+            getCover(htmlcode, domainCover),
             'extrafanart':
             getExtraFanart(htmlcode),
             'tag':
@@ -373,7 +375,7 @@ def main_uncensored(number, appoint_url, domain):
             'cover_small':
             getCover_small(number),  # 从avsox获取封面图
             'actor_photo':
-            getActorPhoto(htmlcode, domain),
+            getActorPhoto(htmlcode, domainCover),
             'website':
             result_url,
             'source':
@@ -404,10 +406,11 @@ def main_uncensored(number, appoint_url, domain):
 
 def main_us(number, appoint_url, domain):
     try:
+        domainCover = domain if domain else 'https://www.javbus.com'
         if appoint_url:
             result_url = appoint_url
         else:
-            htmlcode = get_html('%s/search/%s', (domain, number))
+            htmlcode = get_html('%s/search/%s', (domainCover, number))
             if str(htmlcode) == 'ProxyError':
                 raise TimeoutError
             html = etree.fromstring(
@@ -450,11 +453,11 @@ def main_us(number, appoint_url, domain):
             'number': getNum(htmlcode),
             'tag': getTag(htmlcode),
             'series': getSeries(htmlcode),
-            'cover': getCover(htmlcode, domain),
+            'cover': getCover(htmlcode, domainCover),
             'extrafanart': getExtraFanart(htmlcode),
             'cover_small': '',
             'imagecut': 0,
-            'actor_photo': getActorPhoto(htmlcode, domain),
+            'actor_photo': getActorPhoto(htmlcode, domainCover),
             'publisher': '',
             'outline': '',
             'score': '',

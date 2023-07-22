@@ -151,7 +151,7 @@ def getScore(htmlcode):
     return str(re.findall(r'5点満点中 (\S+)点', htmlcode)).strip(" ['']")
 
 
-def main(number, appoint_url):
+def main(number, appoint_url, domain=''):
     try:
         number = number.upper()
         url = 'https://www.mgstage.com/product/product_detail/' + str(
