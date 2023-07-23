@@ -40,8 +40,8 @@ class JavMedia:
             try:
                 fileName = os.path.basename(file_path)
                 jMeta = JMeta(fileName, number=number)
-                log.info("【Rmt】Making Data for [" + file_path +
-                         "], the number is [" + jMeta.get_number() + "]")
+                log.info("【Rmt】开始刮削： [" + file_path + "], the number is [" +
+                         jMeta.get_number() + "]")
                 result = self.Core_Main(filepath=file_path,
                                         jMeta=jMeta,
                                         jav_site=jav_site,

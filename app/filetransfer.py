@@ -1403,7 +1403,8 @@ class FileTransfer:
             "actor": media.actor,
             "number": media.number,
             "runtime": media.runtime,
-            "tag": str(',').join(media.tag)
+            "tag": str(',').join(media.tag),
+            "part": media.part
         }
 
     def get_moive_dest_path(self, media_info):
