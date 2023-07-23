@@ -253,7 +253,7 @@ def main(number, appoint_url, domain):
         else:
             result_url = find_number(number, domainCover)
         if result_url == 'not found':
-            raise Exception('Movie Data not found in javbus.main!')
+            raise Exception(r'%s not found in javbus.main!' % number)
         htmlcode = get_html(result_url)
         if str(htmlcode) == 'ProxyError':
             raise TimeoutError
@@ -272,7 +272,8 @@ def main(number, appoint_url, domain):
             'outline':
             str(getTitle(htmlcode)).replace(number,
                                             '').strip().replace(' ', '-'),
-            'score': '',
+            'score':
+            '',
             'runtime':
             getRuntime(htmlcode).replace('分鐘', '').strip(),
             'director':
@@ -330,7 +331,8 @@ def main_uncensored(number, appoint_url, domain):
         else:
             result_url = appoint_url
         if result_url == 'not found':
-            raise Exception('Movie Data not found in javbus.main_uncensored!')
+            raise Exception(r'%s not found in javbus.main_uncensored!' %
+                            number)
         htmlcode = get_html(result_url)
         if str(htmlcode) == 'ProxyError':
             raise TimeoutError
@@ -418,7 +420,7 @@ def main_us(number, appoint_url, domain):
             counts = len(
                 html.xpath("//div[@class='row']/div[@id='waterfall']/div"))
             if counts == 0:
-                raise Exception('Movie Data not found in javbus.main_us!')
+                raise Exception(r'%s not found in javbus.main_us!' % number)
             result_url = ''
             cover_small = ''
             for count in range(1, counts + 1):  # 遍历搜索结果，找到需要的番号
@@ -437,7 +439,7 @@ def main_us(number, appoint_url, domain):
                     )[0]
                     break
             if result_url == '':
-                raise Exception('Movie Data not found in javbus.main_us!')
+                raise Exception(r'%s not found in javbus.main_us!' % number)
         htmlcode = get_html(result_url)
         if str(htmlcode) == 'ProxyError':
             raise TimeoutError

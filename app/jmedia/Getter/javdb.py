@@ -236,7 +236,7 @@ def main(number, appoint_url, isuncensored=False, domain=''):
                     '//div[@id=\'videos\']/div[@class=\'grid columns\']/div[@class=\'grid-item column\']'
                 ))
             if counts == 0:
-                raise Exception('Movie Data not found in javdb.main!')
+                raise Exception(r'%s not found in javdb.main!' % number)
             # ========================================================================遍历搜索结果，找到需要的番号所在URL
             count = 1
             movie_found = 0
@@ -249,7 +249,7 @@ def main(number, appoint_url, isuncensored=False, domain=''):
                     movie_found = 1
                     break
             if movie_found == 0:
-                raise Exception('Movie Data not found in javdb.main!')
+                raise Exception(r'%s not found in javdb.main!' % number)
             result_url = 'https://javdb.com' + html.xpath(
                 '//*[@id="videos"]/div/div/a/@href')[count - 1]
         else:
@@ -359,7 +359,7 @@ def main_us(number, appoint_url='', domain=''):
                     '//div[@id=\'videos\']/div[@class=\'grid columns\']/div[@class=\'grid-item column\']'
                 ))
             if counts == 0:
-                raise Exception('Movie Data not found in javdb.main_us!')
+                raise Exception(r'%s not found in javdb.main_us!' % number)
             # ========================================================================遍历搜索结果，找到需要的番号所在URL
             number_series = number.split('.')[0]
             number_date = '20' + number.replace(number_series, '').strip('.')
@@ -400,7 +400,7 @@ def main_us(number, appoint_url='', domain=''):
                     movie_found = 1
                     break
             if movie_found == 0:
-                raise Exception('Movie Data not found in javdb.main_us!')
+                raise Exception(r'%s not found in javdb.main_us!' % number)
             result_url = 'https://javdb.com' + html.xpath(
                 '//*[@id="videos"]/div/div/a/@href')[count - 1]
         # ========================================================================请求、判断结果

@@ -128,7 +128,7 @@ def main(number, appoint_url, isuncensored=False, domain=''):
         if str(response) == 'ProxyError':
             raise TimeoutError
         if '未找到您要找的AV' in response:
-            raise Exception('Movie Data not found in jav321!')
+            raise Exception(r'%s not found in jav321!' % number)
         detail_page = etree.fromstring(response, etree.HTMLParser())
         release = getRelease(response)
         actor = getActor(response)

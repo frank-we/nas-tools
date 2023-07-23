@@ -139,7 +139,7 @@ def main(number, appoint_url='', domain=''):
         if appoint_url != '':
             url = appoint_url
         elif url == '':
-            raise Exception('Movie Data not found in avsox!')
+            raise Exception(r'%s not found in avsox!' % number)
         web = get_html(url)
         soup = BeautifulSoup(web, 'lxml')
         info = str(soup.find(attrs={'class': 'row movie'}))

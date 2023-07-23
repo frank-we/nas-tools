@@ -172,7 +172,7 @@ def main(number, appoint_url, domain=''):
     try:
         url, detail_page = find_number(number, appoint_url)
         if url == 'not found':
-            raise Exception('Movie Data not found in xcity!')
+            raise Exception(r'%s not found in xcity!' % number)
         actor = getActor(detail_page)
         release = getRelease(detail_page)
         dic = {
