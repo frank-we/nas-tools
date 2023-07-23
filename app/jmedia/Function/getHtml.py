@@ -28,9 +28,7 @@ def get_html_javdb(url):
 
 
 def get_html(url, cookies=None):
-    proxy_type = ''
     retry_count = 0
-    proxy = ''
     timeout = 0
     try:
         timeout, retry_count = get_config()
@@ -62,16 +60,14 @@ def get_html(url, cookies=None):
 
 
 def post_html(url: str, query: dict):
-    proxy_type = ''
     retry_count = 0
-    proxy = ''
     timeout = 0
     try:
-        proxy_type, proxy, timeout, retry_count = get_config()
+        timeout, retry_count = get_config()
     except Exception as error_info:
         print('Error in post_html :' + str(error_info))
         print('[-]Proxy config error! Please check the config.')
-    proxies = get_proxies(proxy_type, proxy)
+    proxies = get_proxies()
     for i in range(retry_count):
         try:
             result = requests.post(url,
