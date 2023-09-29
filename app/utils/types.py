@@ -34,6 +34,7 @@ class SearchType(Enum):
     SLACK = "Slack"
     SYNOLOGY = "Synology Chat"
 
+
 class JavDomainType(Enum):
     ALL = 'all'
     JAV321 = 'jav321'
@@ -43,6 +44,7 @@ class JavDomainType(Enum):
     MGSTAGE = 'mgstage'
     XCITY = 'xcity'
     JAVBUS = 'javbus'
+
 
 class RmtMode(Enum):
     LINK = "硬链接"

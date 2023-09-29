@@ -589,7 +589,7 @@ class FileTransfer:
                 else:
                     file_list = [in_path]
         else:
-            # 传入的是个文件列表，这些文失件是in_path下面的文件
+            # 传入的是个文件列表，这些文件是in_path下面的文件
             file_list = files
 
         # 目录同步模式下，过滤掉文件列表中已处理过的
@@ -607,7 +607,6 @@ class FileTransfer:
                 Medias = self.jmedia.get_media_info_on_files(
                     file_list, number=tmdb_info.get_number())
             else:
-
                 Medias = self.jmedia.get_media_info_on_files(file_list)
         else:
             #  过滤掉文件列表
@@ -951,8 +950,16 @@ class FileTransfer:
                                      value=round(total_count / len(Medias) *
                                                  100),
                                      text="%s 转移完成" % file_name)
-                # 移动模式随机休眠（兼容一些网盘挂载目录）
+                # 移动模式删除空目录、随机休眠（兼容一些网盘挂载目录）
                 if rmt_mode == RmtMode.MOVE:
+                    path = os.path.split(file_item)[0]
+                    if len(os.listdir(path)) == 0:
+                        try:
+                            os.chdir(os.path.realpath(path))
+                            log.info('【Rmt】删除空目录: ' + path)
+                        except Exception as error_info:
+                            log.error('【Rmt】删除空目录失败: ' + path)
+                            ExceptionUtils.exception_traceback(error_info)
                     sleep(round(random.uniform(0, 1), 1))
 
             except Exception as err:
@@ -1296,14 +1303,14 @@ class FileTransfer:
         """
         if not path or not os.path.exists(path) or not customWordGroupId:
             return path, False
-        list = os.path.split(path)
+        # list = os.path.split(path)
         result, msg, flag = self.wordsHelper.processByGid(
-            title=list[1], gid=customWordGroupId)
+            title=path, gid=customWordGroupId)
         if not flag and msg:
             log.warn("【Sync】自定义识别失败 %s" % msg)
             return path, False
         else:
-            return os.path.join(list[0], result), True
+            return result, True
 
     def link_sync_file(self, src_path, in_file, target_dir, sync_transfer_mode,
                        customWordGroupId):

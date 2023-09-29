@@ -1,4 +1,5 @@
 import os
+import re
 from time import sleep
 
 import log
@@ -78,17 +79,17 @@ class JavMedia:
             raise Exception('Cover_small Url is None!')
 
         # ======判断-C,-CD后缀,无码,流出
-        if '-c.' in filepath or '-C.' in filepath or '中文' in filepath or '字幕' in filepath:
+        if re.search(r'\d+-?(c|中文|字幕)', filepath, re.IGNORECASE):
             json_data['cn_sub'] = True
-        if json_data['imagecut'] == 3:  # imagecut=3为无码
-            json_data['uncensored'] = True
+        if json_data['isuncensored'] or 'uncensored' in filepath:
+            json_data['isuncensored'] = True
         if '流出' in os.path.split(filepath):
             json_data['leak'] = True
         jMeta.set_info(json_data=json_data)
         return jMeta
 
     def get_json_data(self, jav_site, domain, number, appoint_url):
-        if jav_site == JavDomainType.JAVDB:  # javdb模式 西门大官人#javbus
+        if jav_site == JavDomainType.JAVDB:  # javdb模式
             self.add_text_main('【Rmt】Please Wait Three Seconds！')
             sleep(3)
         json_data = getDataFromJSON(jav_site=jav_site,

@@ -99,7 +99,7 @@ class JMeta(object):
                 str = "%s %s" % (str, title)
             else:
                 str = title
-        return str
+        return str[:90]
 
     def set_number(self, number):
         self.number = number
@@ -138,7 +138,7 @@ class JMeta(object):
         self.leak = json_data.get('leak', False)
         self.cn_sub = json_data.get('cn_sub', False)
         self.series = json_data.get('series', '')
-        self.uncensored = json_data.get('uncensored', False)
+        self.uncensored = json_data.get('isuncensored', False)
 
         if self.leak and '流出' not in self.tag:
             self.tag.append('流出')

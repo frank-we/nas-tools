@@ -1,3 +1,4 @@
+import os
 import regex as re
 
 from app.helper import DbHelper
@@ -37,6 +38,7 @@ class WordsHelper:
                                                                 regex=1)
 
     def process(self, title):
+        title, ext = os.path.splitext(title)
         # 错误信息
         msg = []
         # 应用自定义识别
@@ -137,6 +139,7 @@ class WordsHelper:
                 elif offset_msg:
                     msg.append(f"自定义集偏移词 {offset_word} 格式有误：{offset_msg}")
 
+        title = f"{title}.{ext}" if len(ext) > 0 else title
         return title, msg, {
             "ignored": used_ignored_words,
             "replaced": used_replaced_words,

@@ -79,7 +79,7 @@ def getNumber(filepath):
     """
     获取番号
     """
-    filepath = re.sub(r'-?(c|C)\.', '.', filepath)
+    filepath = re.sub(r'-?(c|C|ch|CH)\.', '.', filepath)
     filename = os.path.splitext(filepath.split('/')[-1])[0]
     part = ''
     if re.search('-CD\d+', filename):
@@ -143,7 +143,6 @@ def getDataFromJSON(file_number,
     # ==========网站规则添加开始==========
     isuncensored = is_uncensored(file_number)
     json_data = {}
-    json_data['isuncensored'] = isuncensored
     if jav_site == JavDomainType.ALL.value:  # 从全部网站刮削
         # ==========无码抓取:111111-111,n1111,HEYZO-1111,SMD-115
         if isuncensored:
@@ -186,9 +185,10 @@ def getDataFromJSON(file_number,
         # ==========sexart.15.06.14
         elif re.search('\D+\.\d{2}\.\d{2}\.\d{2}', file_number):
             json_data = json.loads(
-                    javbus.main_us(file_number, appoint_url, domain=domain))
+                javbus.main_us(file_number, appoint_url, domain=domain))
             if getDataState(json_data) == 0:
-                json_data = json.loads(javdb.main_us(file_number, appoint_url, domain=domain))
+                json_data = json.loads(
+                    javdb.main_us(file_number, appoint_url, domain=domain))
         # ==========MIDE-139
         else:
             json_data = json.loads(
@@ -227,16 +227,14 @@ def getDataFromJSON(file_number,
             json_data = json.loads(
                 javbus.main(file_number, appoint_url, domain=domain))
         else:
-            json_data = {
-            'title': '',
-            'actor': '',
-            'website': ''}
+            json_data = {'title': '', 'actor': '', 'website': ''}
     elif jav_site == JavDomainType.JAV321.value:  # 仅从jav321
         json_data = json.loads(
             jav321.main(file_number, isuncensored, appoint_url, domain=domain))
     elif jav_site == JavDomainType.JAVDB.value:  # 仅从javdb
         if re.search('\D+\.\d{2}\.\d{2}\.\d{2}', file_number):
-            json_data = json.loads(javdb.main_us(file_number, appoint_url, domain=domain))
+            json_data = json.loads(
+                javdb.main_us(file_number, appoint_url, domain=domain))
         else:
             json_data = json.loads(
                 javdb.main(file_number,
@@ -273,8 +271,6 @@ def getDataFromJSON(file_number,
     tag = str(json_data['tag']).strip("[ ]").replace("'", '').replace(
         " ", '').split(',')  # 字符串转列表 @
     actor = str(actor_list).strip("[ ]").replace("'", '').replace(" ", '')
-    if actor == '':
-        actor = 'Unknown'
 
     # ==========处理异常字符========== #\/:*?"<>|
     title = title.replace(actor, '')
@@ -315,6 +311,7 @@ def getDataFromJSON(file_number,
     json_data['release'] = release
     json_data['cover_small'] = cover_small
     json_data['tag'] = tag
+    json_data['isuncensored'] = isuncensored
     return json_data
 
 
