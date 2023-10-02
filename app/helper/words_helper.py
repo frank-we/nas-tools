@@ -139,7 +139,7 @@ class WordsHelper:
                 elif offset_msg:
                     msg.append(f"自定义集偏移词 {offset_word} 格式有误：{offset_msg}")
 
-        title = f"{title}.{ext}" if len(ext) > 0 else title
+        title = f"{title}{ext}" if len(ext) > 0 else title
         return title, msg, {
             "ignored": used_ignored_words,
             "replaced": used_replaced_words,

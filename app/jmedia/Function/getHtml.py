@@ -41,8 +41,7 @@ def get_html(url, cookies=None):
         try:
             headers = {
                 'User-Agent':
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
-                'Chrome/60.0.3100.0 Safari/537.36'
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.43'
             }
             getweb = requests.get(str(url),
                                   headers=headers,
