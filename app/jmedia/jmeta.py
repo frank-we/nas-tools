@@ -99,7 +99,7 @@ class JMeta(object):
                 str = "%s %s" % (str, title)
             else:
                 str = title
-        return str[:90]
+        return str
 
     def set_number(self, number):
         self.number = number

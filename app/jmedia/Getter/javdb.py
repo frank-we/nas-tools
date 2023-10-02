@@ -1,4 +1,5 @@
 import re
+import log
 from bs4 import BeautifulSoup, SoupStrainer
 from lxml import etree
 import json
@@ -217,7 +218,7 @@ def getOutlineScore(number):  # 获取简介
                                    response)).strip(" [',']").replace(
                                        '\'', '')
     except Exception as error_info:
-        print('Error in javdb.getOutlineScore : ' + str(error_info))
+        log.error('Error in javdb.getOutlineScore : ' + str(error_info))
     return outline, score
 
 
@@ -327,7 +328,7 @@ def main(number, appoint_url, isuncensored=False, domain=''):
             'website': 'timeout',
         }
     except Exception as error_info:
-        print('Error in javdb.main : ' + str(error_info))
+        log.error('Error in javdb.main : ' + str(error_info))
         dic = {
             'title': '',
             'website': '',
@@ -461,7 +462,7 @@ def main_us(number, appoint_url='', domain=''):
             'website': 'timeout',
         }
     except Exception as error_info:
-        print('Error in javdb.main_us : ' + str(error_info))
+        log.error('Error in javdb.main_us : ' + str(error_info))
         dic = {
             'title': '',
             'website': '',

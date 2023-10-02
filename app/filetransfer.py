@@ -1433,11 +1433,12 @@ class FileTransfer:
         """
         format_dict = self.get_jav_format_dict(media_info)
         dir_name = re.sub(r"[-_\s.]*None", "",
-                          self._jav_dir_rmt_format.format(**format_dict))
+                          self._jav_dir_rmt_format.format(**format_dict))[:60]
         file_name = re.sub(r"[-_\s.]*(None|underfind)", "",
                            self._jav_file_rmt_format.format(**format_dict))
         file_name = re.sub(r"[-_\s.]*$", "",
                            self._jav_file_rmt_format.format(**format_dict))
+
         return dir_name, file_name
 
     def get_tv_dest_path(self, media_info):

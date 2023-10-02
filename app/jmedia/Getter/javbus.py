@@ -1,4 +1,5 @@
 import re
+import log
 from pyquery import PyQuery as pq
 from lxml import etree
 from bs4 import BeautifulSoup
@@ -149,7 +150,7 @@ def getOutlineScore(number):  # 获取简介
                         html.xpath('//*[@class="mg-t0 mg-b20"]/text()')).strip(
                             " ['']").replace('\\n', '').replace('\n', '')
     except Exception as error_info:
-        print('Error in javbus.getOutlineScore : ' + str(error_info))
+        log.error('Error in javbus.getOutlineScore : ' + str(error_info))
     return outline, score
 
 
@@ -177,7 +178,7 @@ def getCover_small(number):  # 从avsox获取封面图
                 html.xpath("//div[@id='waterfall']/div[" + str(count) + "]/a/div[@class='photo-frame']/img/@src")[0]
                 return cover_small
     except Exception as error_info:
-        print('Error in javbus.getCover_small : ' + str(error_info))
+        log.error('Error in javbus.getCover_small : ' + str(error_info))
     return ''
 
 
@@ -193,6 +194,14 @@ def getTag(htmlcode):  # 获取标签
 
 
 def find_number(number, domain):
+    # =======================================================================尝试直接访问
+    result_url = '%s/%s' % (domain, number)
+    htmlcode = get_html(result_url)
+    html = etree.fromstring(htmlcode, etree.HTMLParser())
+    counts = len(html.xpath("//div[@class='container']"))
+    if counts != 0:
+        return True, htmlcode
+
     # =======================================================================有码搜索
     if not (re.match('^\d{4,}', number) or re.match('n\d{4}', number)
             or 'HEYZO' in number.upper()):
@@ -215,14 +224,15 @@ def find_number(number, domain):
                     result_url = html.xpath(
                         "//div[@id='waterfall']/div[@id='waterfall']/div[" +
                         str(count) + "]/a[@class='movie-box']/@href")[0]
-                    return result_url
+                    return False, result_url
+
     # =======================================================================无码搜索
     htmlcode = get_html('%s/uncensored/search/%s&type=1' % (domain, number))
     html = etree.fromstring(htmlcode,
                             etree.HTMLParser())  # //table/tr[1]/td[1]/text()
     counts = len(html.xpath("//div[@id='waterfall']/div[@id='waterfall']/div"))
     if counts == 0:
-        return 'not found'
+        return False, 'not found'
     for count in range(1, counts + 1):  # 遍历搜索结果，找到需要的番号
         number_get = html.xpath(
             "//div[@id='waterfall']/div[@id='waterfall']/div[" + str(count) +
@@ -235,14 +245,14 @@ def find_number(number, domain):
             result_url = html.xpath(
                 "//div[@id='waterfall']/div[@id='waterfall']/div[" +
                 str(count) + "]/a[@class='movie-box']/@href")[0]
-            return result_url
+            return False, result_url
         elif number_get == number.replace(
                 '-', '_') or number_get == number.replace('_', '-'):
             result_url = html.xpath(
                 "//div[@id='waterfall']/div[@id='waterfall']/div[" +
                 str(count) + "]/a[@class='movie-box']/@href")[0]
-            return result_url
-    return 'not found'
+            return False, result_url
+    return False, 'not found'
 
 
 def main(number, appoint_url, domain):
@@ -251,10 +261,13 @@ def main(number, appoint_url, domain):
         if appoint_url:
             result_url = appoint_url
         else:
-            result_url = find_number(number, domainCover)
-        if result_url == 'not found':
+            htmlFlag, result_url = find_number(number, domainCover)
+        if not htmlFlag and result_url == 'not found':
             raise Exception(r'%s not found in javbus.main!' % number)
-        htmlcode = get_html(result_url)
+        if htmlFlag:
+            htmlcode = result_url
+        else:
+            htmlcode = get_html(result_url)
         if str(htmlcode) == 'ProxyError':
             raise TimeoutError
         # outline, score = getOutlineScore(number)
@@ -307,7 +320,7 @@ def main(number, appoint_url, domain):
             'website': 'timeout',
         }
     except Exception as error_info:
-        print('Error in javbus.main : ' + str(error_info))
+        log.error('Error in javbus.main : ' + str(error_info))
         dic = {
             'title': '',
             'website': '',
@@ -327,10 +340,10 @@ def main_uncensored(number, appoint_url, domain):
         domainCover = domain if domain else 'https://www.javbus.com'
         result_url = ''
         if appoint_url == '':
-            result_url = find_number(number, domainCover)
+            htmlFlag, result_url = find_number(number, domainCover)
         else:
             result_url = appoint_url
-        if result_url == 'not found':
+        if not htmlFlag and result_url == 'not found':
             raise Exception(r'%s not found in javbus.main_uncensored!' %
                             number)
         htmlcode = get_html(result_url)
@@ -391,7 +404,7 @@ def main_uncensored(number, appoint_url, domain):
             'website': 'timeout',
         }
     except Exception as error_info:
-        print('Error in javbus.main_uncensored : ' + str(error_info))
+        log.error('Error in javbus.main_uncensored : ' + str(error_info))
         dic = {
             'title': '',
             'website': '',
@@ -472,7 +485,7 @@ def main_us(number, appoint_url, domain):
             'website': 'timeout',
         }
     except Exception as error_info:
-        print('Error in javbus.main_us : ' + str(error_info))
+        log.error('Error in javbus.main_us : ' + str(error_info))
         dic = {
             'title': '',
             'website': '',

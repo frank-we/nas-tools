@@ -1,4 +1,5 @@
 import re
+import log
 from lxml import etree
 import json
 from app.jmedia.Function.getHtml import post_html
