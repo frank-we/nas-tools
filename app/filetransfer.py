@@ -952,14 +952,6 @@ class FileTransfer:
                                      text="%s 转移完成" % file_name)
                 # 移动模式删除空目录、随机休眠（兼容一些网盘挂载目录）
                 if rmt_mode == RmtMode.MOVE:
-                    path = os.path.split(file_item)[0]
-                    if len(os.listdir(path)) == 0:
-                        try:
-                            os.chdir(os.path.realpath(path))
-                            log.info('【Rmt】删除空目录: ' + path)
-                        except Exception as error_info:
-                            log.error('【Rmt】删除空目录失败: ' + path)
-                            ExceptionUtils.exception_traceback(error_info)
                     sleep(round(random.uniform(0, 1), 1))
 
             except Exception as err:
