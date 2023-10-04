@@ -1,6 +1,7 @@
 import os.path
 import time
 from xml.dom import minidom
+from app.jmedia import jmeta
 
 import log
 from app.helper import FfmpegHelper
@@ -95,7 +96,7 @@ class Scraper:
                               tmdbinfo.get("vote_average") or "0")
         return doc
 
-    def gen_jav_nfo_file(self, javinfo: dict, out_path, file_name):
+    def gen_jav_nfo_file(self, javinfo: jmeta, out_path, file_name):
         """
         生成电影的NFO描述文件
         :param javinfo: jav元数据
@@ -111,48 +112,50 @@ class Scraper:
             doc, root, "dateadded",
             time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
         # 标题
-        DomUtils.add_node(doc, root, "title", javinfo.get("title") or "")
+        DomUtils.add_node(doc, root, "title", javinfo.title)
         DomUtils.add_node(doc, root, "originaltitle",
-                          javinfo.get("original_title") or "")
+                          javinfo.original_title)
         # 简介
         xplot = DomUtils.add_node(doc, root, "plot")
         xplot.appendChild(
-                doc.createCDATASection(javinfo.get("overview") or ""))
+                doc.createCDATASection(javinfo.overview))
         xoutline = DomUtils.add_node(doc, root, "outline")
         xoutline.appendChild(
-                doc.createCDATASection(javinfo.get("overview") or ""))
+                doc.createCDATASection(javinfo.overview))
         # 导演
         DomUtils.add_node(doc, root, "director",
-                                              javinfo.get("director") or "")
+                                              javinfo.director)
         # 演员
-        for key, value in javinfo.get("actor_photo").items():
+        for key, value in javinfo.actor_photo.items():
             xactor = DomUtils.add_node(doc, root, "actor")
             DomUtils.add_node(doc, xactor, "name", key)
             DomUtils.add_node(doc, xactor, "type", "Actor")
             DomUtils.add_node(doc, xactor, "thumb", value)
 
         # 风格
-        tags = javinfo.get("tag") or []
+        tags = javinfo.tag or []
         for genre in tags:
             DomUtils.add_node(doc, root, "genre", genre)
 
-        if javinfo.get("series"):
-            DomUtils.add_node(doc, root, "genre", javinfo.get("series"))
+        if javinfo.series:
+            DomUtils.add_node(doc, root, "genre", javinfo.series)
 
-        if javinfo.get("cover"):
-           xart = DomUtils.add_node(doc, root, "art")
-           DomUtils.add_node(doc, xart, "poster", './poster.jpg')
+        if javinfo.poster_path:
+            xart = DomUtils.add_node(doc, root, "art")
+            DomUtils.add_node(doc, xart, "poster", './poster.jpg')
 
         # website
-        DomUtils.add_node(doc, root, "website", javinfo.get("website"))
+        DomUtils.add_node(doc, root, "website", javinfo.website)
         # 评分
         DomUtils.add_node(doc, root, "rating",
-                              javinfo.get("score") or "0")
+                              javinfo.score or "0")
         # 发布日期
         DomUtils.add_node(doc, root, "premiered",
-                          javinfo.get("release_date") or "")
+                          javinfo.release_date)
+        DomUtils.add_node(doc, root, "releasedate",
+                          javinfo.release_date)
         # 年份
-        DomUtils.add_node( doc, root, "year", javinfo.get("year", "")[:4])
+        DomUtils.add_node( doc, root, "year", javinfo.year[:4])
         # 保存
         self.__save_nfo(doc, os.path.join(out_path, "%s.nfo" % file_name))
 
@@ -436,7 +439,7 @@ class Scraper:
                                 out_path=dir_path,
                                 file_name=file_name)
                         else:
-                            self.gen_jav_nfo_file(javinfo=media.jav_info,
+                            self.gen_jav_nfo_file(javinfo=media,
                                                   out_path=dir_path,
                                                   file_name=file_name)
                 # poster

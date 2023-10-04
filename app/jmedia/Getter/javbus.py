@@ -9,16 +9,18 @@ from app.jmedia.Function.getHtml import post_html
 
 
 def getActorPhoto(htmlcode, domain):
-    soup = BeautifulSoup(htmlcode, 'lxml')
-    a = soup.find_all(attrs={'class': 'star-name'})
+    html = etree.fromstring(htmlcode, etree.HTMLParser())
+    counts = len(html.xpath('//div[@id="avatar-waterfall"]/a'))
     d = {}
-    for i in a:
-        l = i.a['href']
-        t = i.get_text()
-        html = etree.fromstring(get_html(l), etree.HTMLParser())
+    if counts == 0:
+        return d
+    for count in range(1, counts + 1):
         p = domain + str(
-            html.xpath('//*[@id="waterfall"]/div[1]/div/div[1]/img/@src')
-        ).strip(" ['']")
+            html.xpath('//*[@id="avatar-waterfall"]/a[' + str(count) +
+                       ']/div/img/@src')).strip(" ['']")
+        t = str(
+            html.xpath('//*[@id="avatar-waterfall"]/a[' + str(count) +
+                       ']/div/img/@title')).strip(" ['']")
         p2 = {t: p}
         d.update(p2)
     return d
@@ -193,19 +195,28 @@ def getTag(htmlcode):  # 获取标签
     return tag
 
 
+def get_html_extra(result_url):
+    return get_html(
+        result_url,
+        extraheaders={
+            'Accept-Language':
+            'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6,zh-CN;q=0.5'
+        })
+
+
 def find_number(number, domain):
     # =======================================================================尝试直接访问
     result_url = '%s/%s' % (domain, number)
-    htmlcode = get_html(result_url)
+    htmlcode = get_html_extra(result_url)
     html = etree.fromstring(htmlcode, etree.HTMLParser())
     counts = len(html.xpath("//div[@class='container']"))
     if counts != 0:
-        return True, htmlcode
+        return result_url, htmlcode
 
     # =======================================================================有码搜索
     if not (re.match('^\d{4,}', number) or re.match('n\d{4}', number)
             or 'HEYZO' in number.upper()):
-        htmlcode = get_html('%s/search/%s&type=1' % (domain, number))
+        htmlcode = get_html_extra('%s/search/%s&type=1' % (domain, number))
         html = etree.fromstring(
             htmlcode, etree.HTMLParser())  # //table/tr[1]/td[1]/text()
         counts = len(
@@ -224,15 +235,16 @@ def find_number(number, domain):
                     result_url = html.xpath(
                         "//div[@id='waterfall']/div[@id='waterfall']/div[" +
                         str(count) + "]/a[@class='movie-box']/@href")[0]
-                    return False, result_url
+                    return result_url, ''
 
     # =======================================================================无码搜索
-    htmlcode = get_html('%s/uncensored/search/%s&type=1' % (domain, number))
+    htmlcode = get_html_extra('%s/uncensored/search/%s&type=1' %
+                              (domain, number))
     html = etree.fromstring(htmlcode,
                             etree.HTMLParser())  # //table/tr[1]/td[1]/text()
     counts = len(html.xpath("//div[@id='waterfall']/div[@id='waterfall']/div"))
     if counts == 0:
-        return False, 'not found'
+        return result_url, 'not found'
     for count in range(1, counts + 1):  # 遍历搜索结果，找到需要的番号
         number_get = html.xpath(
             "//div[@id='waterfall']/div[@id='waterfall']/div[" + str(count) +
@@ -245,14 +257,14 @@ def find_number(number, domain):
             result_url = html.xpath(
                 "//div[@id='waterfall']/div[@id='waterfall']/div[" +
                 str(count) + "]/a[@class='movie-box']/@href")[0]
-            return False, result_url
+            return result_url, ''
         elif number_get == number.replace(
                 '-', '_') or number_get == number.replace('_', '-'):
             result_url = html.xpath(
                 "//div[@id='waterfall']/div[@id='waterfall']/div[" +
                 str(count) + "]/a[@class='movie-box']/@href")[0]
-            return False, result_url
-    return False, 'not found'
+            return result_url, ''
+    return result_url, 'not found'
 
 
 def main(number, appoint_url, domain):
@@ -261,13 +273,11 @@ def main(number, appoint_url, domain):
         if appoint_url:
             result_url = appoint_url
         else:
-            htmlFlag, result_url = find_number(number, domainCover)
-        if not htmlFlag and result_url == 'not found':
+            result_url, htmlcode = find_number(number, domainCover)
+        if htmlcode == 'not found':
             raise Exception(r'%s not found in javbus.main!' % number)
-        if htmlFlag:
-            htmlcode = result_url
-        else:
-            htmlcode = get_html(result_url)
+        if htmlcode == '':
+            htmlcode = get_html_extra(result_url)
         if str(htmlcode) == 'ProxyError':
             raise TimeoutError
         # outline, score = getOutlineScore(number)
@@ -339,14 +349,17 @@ def main_uncensored(number, appoint_url, domain):
     try:
         domainCover = domain if domain else 'https://www.javbus.com'
         result_url = ''
-        if appoint_url == '':
-            htmlFlag, result_url = find_number(number, domainCover)
-        else:
+        if appoint_url:
             result_url = appoint_url
-        if not htmlFlag and result_url == 'not found':
+        else:
+            result_url, htmlcode = find_number(number, domainCover)
+
+        if htmlcode == 'not found':
             raise Exception(r'%s not found in javbus.main_uncensored!' %
                             number)
-        htmlcode = get_html(result_url)
+        if htmlcode == '':
+            htmlcode = get_html_extra(result_url)
+
         if str(htmlcode) == 'ProxyError':
             raise TimeoutError
         number = getNum(htmlcode)
@@ -425,35 +438,8 @@ def main_us(number, appoint_url, domain):
         if appoint_url:
             result_url = appoint_url
         else:
-            htmlcode = get_html('%s/search/%s', (domainCover, number))
-            if str(htmlcode) == 'ProxyError':
-                raise TimeoutError
-            html = etree.fromstring(
-                htmlcode, etree.HTMLParser())  # //table/tr[1]/td[1]/text()
-            counts = len(
-                html.xpath("//div[@class='row']/div[@id='waterfall']/div"))
-            if counts == 0:
-                raise Exception(r'%s not found in javbus.main_us!' % number)
-            result_url = ''
-            cover_small = ''
-            for count in range(1, counts + 1):  # 遍历搜索结果，找到需要的番号
-                number_get = html.xpath(
-                    "//div[@id='waterfall']/div[" + str(count) +
-                    "]/a[@class='movie-box']/div[@class='photo-info']/span/date[1]/text()"
-                )[0]
-                if number_get.upper() == number.upper() or number_get.replace(
-                        '-', '').upper() == number.upper():
-                    result_url = html.xpath("//div[@id='waterfall']/div[" +
-                                            str(count) +
-                                            "]/a[@class='movie-box']/@href")[0]
-                    cover_small = html.xpath(
-                        "//div[@id='waterfall']/div[" + str(count) +
-                        "]/a[@class='movie-box']/div[@class='photo-frame']/img[@class='img']/@src"
-                    )[0]
-                    break
-            if result_url == '':
-                raise Exception(r'%s not found in javbus.main_us!' % number)
-        htmlcode = get_html(result_url)
+            result_url = '%s/%s' % (domainCover, number)
+        htmlcode = get_html_extra(result_url)
         if str(htmlcode) == 'ProxyError':
             raise TimeoutError
         number = getNum(htmlcode)

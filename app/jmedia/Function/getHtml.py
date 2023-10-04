@@ -27,7 +27,7 @@ def get_html_javdb(url):
     return html
 
 
-def get_html(url, cookies=None):
+def get_html(url, cookies=None, extraheaders=None):
     retry_count = 0
     timeout = 0
     try:
@@ -37,12 +37,14 @@ def get_html(url, cookies=None):
         print('[-]Proxy config error! Please check the config.')
     proxies = get_proxies()
     i = 0
+    headers = {
+        'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.43'
+    }
+    if extraheaders:
+        headers.update(extraheaders)
     while i < retry_count:
         try:
-            headers = {
-                'User-Agent':
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.43'
-            }
             getweb = requests.get(str(url),
                                   headers=headers,
                                   timeout=timeout,

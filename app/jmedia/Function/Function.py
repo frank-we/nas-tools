@@ -185,10 +185,7 @@ def getDataFromJSON(file_number,
         # ==========sexart.15.06.14
         elif re.search('\D+\.\d{2}\.\d{2}\.\d{2}', file_number):
             json_data = json.loads(
-                javbus.main_us(file_number, appoint_url, domain=domain))
-            if getDataState(json_data) == 0:
-                json_data = json.loads(
-                    javdb.main_us(file_number, appoint_url, domain=domain))
+                javdb.main_us(file_number, appoint_url, domain=domain))
         # ==========MIDE-139
         else:
             json_data = json.loads(
@@ -220,9 +217,6 @@ def getDataFromJSON(file_number,
             json_data = json.loads(
                 javbus.main_uncensored(file_number, appoint_url,
                                        domain=domain))
-        elif re.search('\D+\.\d{2}\.\d{2}\.\d{2}', file_number):
-            json_data = json.loads(
-                javbus.main_us(file_number, appoint_url, domain=domain))
         elif re.search('[a-z]+-?\d+', file_number, flags=re.IGNORECASE):
             json_data = json.loads(
                 javbus.main(file_number, appoint_url, domain=domain))
