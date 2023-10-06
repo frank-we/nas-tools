@@ -92,7 +92,7 @@
                   <td>
                     <div class="d-flex py-1 align-items-center">
                       <span class="avatar me-2 text-nowrap">
-                        {% if History.TYPE == "电影" %}
+                        {% if History.TYPE == "电影" or History.TYPE == "jav" %}
                         {{ SVG.movie() }}
                         {% else %}
                         {{ SVG.device_tv() }}
@@ -100,7 +100,11 @@
                       </span>
                       <div class="flex-fill">
                         <div class="font-weight-medium text-wrap">
-                          {% if History.TMDBID %}
+                          {% if History.TYPE == "jav" %}
+                          <a href="https://www.javbus.com/{{ History.SEASON_EPISODE }}" target="_blank">
+                            {{ History.TITLE }} ({{ History.YEAR }})
+                          </a>
+                          {% elif History.TMDBID %}
                           <a href="https://www.themoviedb.org/{% if History.TYPE == " 电影" %}movie{% else %}tv{% endif
                             %}/{{ History.TMDBID }}" target="_blank">
                             {{ History.TITLE }} ({{ History.YEAR }})

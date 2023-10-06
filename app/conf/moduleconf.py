@@ -27,6 +27,7 @@ class ModuleConf(object):
         "link": RmtMode.LINK,
         "softlink": RmtMode.SOFTLINK,
         "move": RmtMode.MOVE,
+        "update": RmtMode.UPDATE,
         "rclone": RmtMode.RCLONE,
         "rclonecopy": RmtMode.RCLONECOPY,
         "minio": RmtMode.MINIO,
@@ -38,6 +39,7 @@ class ModuleConf(object):
         "copy": RmtMode.COPY,
         "link": RmtMode.LINK,
         "softlink": RmtMode.SOFTLINK,
+        "move": RmtMode.MOVE,
         "move": RmtMode.MOVE
     }
 

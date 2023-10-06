@@ -455,13 +455,25 @@ class FileTransfer:
         if not over_flag and os.path.exists(new_file):
             log.warn("【Rmt】文件已存在：%s" % new_file)
             return 0
+        temp_file = new_file
+        if over_flag and old_file and os.path.isfile(old_file):
+            temp_dir, temp_file_name = os.path.split(new_file)
+            temp_file_name, temp_ext = os.path.splitext(temp_file_name)
+            temp_file_name = "%s_temp%s" % (temp_file_name, temp_ext)
+            temp_file = os.path.join(temp_dir, temp_file_name)
+            log.info("【Rmt】目的文件已存在，创建临文件：%s" % temp_file)
+
+        log.info("【Rmt】正在转移文件：%s 到 %s" % (file_name, temp_file))
+        retcode = self.__transfer_command(file_item=file_item,
+                                          target_file=temp_file,
+                                          rmt_mode=rmt_mode)
+
         if over_flag and old_file and os.path.isfile(old_file):
             log.info("【Rmt】正在删除已存在的文件：%s" % old_file)
             os.remove(old_file)
-        log.info("【Rmt】正在转移文件：%s 到 %s" % (file_name, new_file))
-        retcode = self.__transfer_command(file_item=file_item,
-                                          target_file=new_file,
-                                          rmt_mode=rmt_mode)
+            log.info("【Rmt】正在重命名临时的文件：%s 到 %s" % (temp_file, new_file))
+            os.replace(temp_file, new_file)
+
         if retcode == 0:
             log.info("【Rmt】文件 %s %s完成" % (file_name, rmt_mode.value))
             self.dbhelper.insert_transfer_blacklist(file_item)
@@ -731,6 +743,7 @@ class FileTransfer:
                 new_file = ret_file_path
                 # 已存在的文件数量
                 exist_filenum = 0
+                # 文件已存在并已覆盖转移
                 handler_flag = False
                 # 路径存在
                 if dir_exist_flag:
@@ -776,13 +789,43 @@ class FileTransfer:
                                     continue
                                 handler_flag = True
                             else:
-                                log.warn("【Rmt】文件 %s 已存在" % ret_file_path)
+                                log.warn("【Rmt】文件 %s 已存在" % new_file)
                                 failed_count += 1
                                 continue
                         else:
-                            log.warn("【Rmt】文件 %s 已存在" % ret_file_path)
+                            log.warn("【Rmt】文件 %s 已存在" % new_file)
                             failed_count += 1
                             continue
+                    elif rmt_mode == RmtMode.UPDATE:
+                        ret_file_path, ret_file_ext = os.path.splitext(
+                            ret_file_path)
+                        new_file = "%s%s" % (ret_file_path, file_ext)
+                        old_file = "%s%s" % (ret_file_path, ret_file_ext)
+                        old_nfo = "%s%s" % (os.path.splitext(file_item)[0],
+                                            '.nfo')
+
+                        log.info("【Rmt】更新文件 %s 为 %s" % (old_file, new_file))
+                        ret = self.__transfer_file(file_item=file_item,
+                                                   new_file=new_file,
+                                                   rmt_mode=RmtMode.MOVE,
+                                                   over_flag=True,
+                                                   old_file=old_file)
+                        if ret != 0:
+                            success_flag = False
+                            error_message = "文件转移失败，错误码 %s" % ret
+                            self.progress.update(ptype="filetransfer",
+                                                 text=error_message)
+                            if udf_flag:
+                                return __finish_transfer(
+                                    success_flag, error_message)
+                            failed_count += 1
+                            alert_count += 1
+                            if error_message not in alert_messages:
+                                alert_messages.append(error_message)
+                            continue
+                        elif old_nfo and os.path.isfile(old_nfo):
+                            os.remove(old_nfo)
+                        handler_flag = True
                 # 路径不存在
                 else:
                     if not ret_dir_path:
@@ -944,7 +987,8 @@ class FileTransfer:
                         scraper_pic=self._scraper_pic,
                         dir_path=ret_dir_path,
                         file_name=os.path.basename(ret_file_path),
-                        file_ext=file_ext)
+                        file_ext=file_ext,
+                        update_flag=rmt_mode == RmtMode.UPDATE)
                 # 更新进度
                 self.progress.update(ptype="filetransfer",
                                      value=round(total_count / len(Medias) *
@@ -952,6 +996,15 @@ class FileTransfer:
                                      text="%s 转移完成" % file_name)
                 # 移动模式删除空目录、随机休眠（兼容一些网盘挂载目录）
                 if rmt_mode == RmtMode.MOVE:
+                    path = os.path.split(file_item)[0]
+                    if os.path.exists(path) \
+                        and not PathUtils.get_dir_files(in_path=path, exts=RMT_MEDIAEXT) :
+                        try:
+                            os.chdir(os.path.realpath(path))
+                            log.info('【Rmt】目录下已无媒体文件，移动模式下删除目录：: ' + path)
+                        except Exception as error_info:
+                            log.error('【Rmt】删除目录失败: ' + path)
+                            ExceptionUtils.exception_traceback(error_info)
                     sleep(round(random.uniform(0, 1), 1))
 
             except Exception as err:

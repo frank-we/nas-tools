@@ -786,7 +786,9 @@ class WebAction:
         episode_details = data.get("episode_details")
         episode_offset = data.get("episode_offset")
         min_filesize = data.get("min_filesize")
-        if mtype in MovieTypes:
+        if mtype.upper() == 'JAV':
+            media_type = MediaType.JAV
+        elif mtype in MovieTypes:
             media_type = MediaType.MOVIE
         elif mtype in TvTypes:
             media_type = MediaType.TV
@@ -839,7 +841,7 @@ class WebAction:
             media_type = MediaType.MOVIE
         elif mtype in TvTypes:
             media_type = MediaType.TV
-        elif mtype == 'JAV':
+        elif mtype.upper() == 'JAV':
             media_type = MediaType.JAV
         else:
             media_type = MediaType.ANIME
@@ -888,7 +890,8 @@ class WebAction:
                 tmdb_info = JMeta('')
                 tmdb_info.set_number(number=tmdbid)
             else:
-                tmdb_info = Media().get_tmdb_info(mtype=media_type, tmdbid=tmdbid)
+                tmdb_info = Media().get_tmdb_info(mtype=media_type,
+                                                  tmdbid=tmdbid)
             if not tmdb_info:
                 return False, "识别失败，无法查询到TMDB信息"
             # 按识别的信息转移
@@ -3680,7 +3683,7 @@ class WebAction:
         if MSType == 'jellyfin':
             showLog = Config().get_config('jellyfin').get('show_log')
             if not showLog:
-                return {"code": 0, "result":[]}
+                return {"code": 0, "result": []}
 
         return {"code": 0, "result": MediaServer().get_activity_log(30)}
 

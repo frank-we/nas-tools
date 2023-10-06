@@ -113,18 +113,14 @@ class Scraper:
             time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
         # 标题
         DomUtils.add_node(doc, root, "title", javinfo.title)
-        DomUtils.add_node(doc, root, "originaltitle",
-                          javinfo.original_title)
+        DomUtils.add_node(doc, root, "originaltitle", javinfo.original_title)
         # 简介
         xplot = DomUtils.add_node(doc, root, "plot")
-        xplot.appendChild(
-                doc.createCDATASection(javinfo.overview))
+        xplot.appendChild(doc.createCDATASection(javinfo.overview))
         xoutline = DomUtils.add_node(doc, root, "outline")
-        xoutline.appendChild(
-                doc.createCDATASection(javinfo.overview))
+        xoutline.appendChild(doc.createCDATASection(javinfo.overview))
         # 导演
-        DomUtils.add_node(doc, root, "director",
-                                              javinfo.director)
+        DomUtils.add_node(doc, root, "director", javinfo.director)
         # 演员
         for key, value in javinfo.actor_photo.items():
             xactor = DomUtils.add_node(doc, root, "actor")
@@ -147,15 +143,12 @@ class Scraper:
         # website
         DomUtils.add_node(doc, root, "website", javinfo.website)
         # 评分
-        DomUtils.add_node(doc, root, "rating",
-                              javinfo.score or "0")
+        DomUtils.add_node(doc, root, "rating", javinfo.score or "0")
         # 发布日期
-        DomUtils.add_node(doc, root, "premiered",
-                          javinfo.release_date)
-        DomUtils.add_node(doc, root, "releasedate",
-                          javinfo.release_date)
+        DomUtils.add_node(doc, root, "premiered", javinfo.release_date)
+        DomUtils.add_node(doc, root, "releasedate", javinfo.release_date)
         # 年份
-        DomUtils.add_node( doc, root, "year", javinfo.year[:4])
+        DomUtils.add_node(doc, root, "year", javinfo.year[:4])
         # 保存
         self.__save_nfo(doc, os.path.join(out_path, "%s.nfo" % file_name))
 
@@ -392,8 +385,14 @@ class Scraper:
         with open(out_file, "wb") as xml_file:
             xml_file.write(xml_str)
 
-    def gen_scraper_files(self, media, scraper_nfo, scraper_pic, dir_path,
-                          file_name, file_ext):
+    def gen_scraper_files(self,
+                          media,
+                          scraper_nfo,
+                          scraper_pic,
+                          dir_path,
+                          file_name,
+                          file_ext,
+                          update_flag=False):
         """
         刮削元数据
         :param media: 已识别的媒体信息
@@ -408,6 +407,7 @@ class Scraper:
         if not scraper_pic:
             scraper_pic = {}
         try:
+            file_name, _ = os.path.splitext(file_name)
             # 电影
             if media.type == MediaType.MOVIE or media.type == MediaType.JAV:
                 scraper_movie_nfo = scraper_nfo.get(
@@ -420,8 +420,8 @@ class Scraper:
                 #  movie nfo
                 if scraper_movie_nfo.get("basic") or scraper_movie_nfo.get(
                         "credits"):
-                    # 已存在时不处理
-                    if not os.path.exists(os.path.join(dir_path, "movie.nfo")) \
+                    # 更新或已存在时不处理
+                    if update_flag or not os.path.exists(os.path.join(dir_path, "movie.nfo")) \
                             and not os.path.exists(os.path.join(dir_path, "%s.nfo" % file_name)):
                         # 查询Douban信息
                         if scraper_movie_nfo.get(

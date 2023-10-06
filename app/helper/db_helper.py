@@ -237,11 +237,11 @@ class DbHelper:
             outpath = os.path.normpath(out_path)
             dest_path = os.path.dirname(outpath)
             dest_filename = os.path.basename(outpath)
-            season_episode = '' if media_info.type == MediaType.JAV else media_info.get_season_episode_string()
+            season_episode = media_info.number if media_info.type == MediaType.JAV else media_info.get_season_episode_string()
         else:
             dest_path = ""
             dest_filename = ""
-            season_episode = '' if media_info.type == MediaType.JAV else media_info.get_season_string()
+            season_episode = media_info.number if media_info.type == MediaType.JAV else media_info.get_season_string()
         title = media_info.title
         if self.is_transfer_history_exists(source_path, source_filename,
                                            dest_path, dest_filename):

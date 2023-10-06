@@ -51,6 +51,7 @@ class RmtMode(Enum):
     SOFTLINK = "软链接"
     COPY = "复制"
     MOVE = "移动"
+    UPDATE = "更新"
     RCLONECOPY = "Rclone复制"
     RCLONE = "Rclone移动"
     MINIOCOPY = "Minio复制"
