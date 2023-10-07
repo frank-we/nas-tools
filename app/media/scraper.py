@@ -420,7 +420,7 @@ class Scraper:
                 #  movie nfo
                 if scraper_movie_nfo.get("basic") or scraper_movie_nfo.get(
                         "credits"):
-                    # 更新或已存在时不处理
+                    # 除非更新，已存在时不处理
                     if update_flag or not os.path.exists(os.path.join(dir_path, "movie.nfo")) \
                             and not os.path.exists(os.path.join(dir_path, "%s.nfo" % file_name)):
                         # 查询Douban信息
