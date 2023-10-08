@@ -407,7 +407,7 @@ class Scraper:
         if not scraper_pic:
             scraper_pic = {}
         try:
-            file_name, _ = os.path.splitext(file_name)
+            file_name = os.path.basename(file_name)
             # 电影
             if media.type == MediaType.MOVIE or media.type == MediaType.JAV:
                 scraper_movie_nfo = scraper_nfo.get(
