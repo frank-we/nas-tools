@@ -875,11 +875,11 @@ class FileTransfer:
                             log.info("【Rmt】目录 %s 已存在，重命名为 %s" %
                                      (file_path, ret_dir_path))
                             new_paths[file_path] = ret_dir_path
-                            o_paths = file_path.split('\\')
-                            n_paths = ret_dir_path.split('\\')
+                            o_paths = file_path.split(os.sep)
+                            n_paths = ret_dir_path.split(os.sep)
                             count = len(o_paths)
-                            o_path = os.path.join('\\', o_paths[0])
-                            n_path = os.path.join('\\', n_paths[0])
+                            o_path = os.path.join(os.sep, o_paths[0])
+                            n_path = os.path.join(os.sep, n_paths[0])
                             for i in range(1, count):
                                 o_path = os.path.join(o_path, o_paths[i])
                                 n_path = os.path.join(n_path, n_paths[i])
