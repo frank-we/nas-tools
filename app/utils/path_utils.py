@@ -40,7 +40,8 @@ class PathUtils:
             if exts and os.path.splitext(in_path)[-1].lower() not in exts:
                 return []
             # 检查格式
-            if episode_format and not episode_format.match(os.path.basename(in_path)):
+            if episode_format and not episode_format.match(
+                    os.path.basename(in_path)):
                 return []
             # 检查文件大小
             if filesize and os.path.getsize(in_path) < filesize:
@@ -90,8 +91,9 @@ class PathUtils:
         """
         if not path:
             return True
-        if path.find('/@Recycle/') != -1 or path.find('/#recycle/') != -1 or path.find('/.') != -1 or path.find(
-                '/@eaDir') != -1:
+        if path.find('/@Recycle/') != -1 or path.find(
+                '/#recycle/') != -1 or path.find('/.') != -1 or path.find(
+                    '/@eaDir') != -1:
             return True
         return False
 
@@ -116,6 +118,17 @@ class PathUtils:
         return False
 
     @staticmethod
+    def get_path_level(path):
+        """
+        判断路径层级
+        """
+        level = 1
+        while path != os.path.dirname(path):
+            path = os.path.dirname(path)
+            level += 1
+        return level
+
+    @staticmethod
     def get_bluray_dir(path):
         """
         判断是否蓝光原盘目录，是则返回原盘的根目录，否则返回空
@@ -134,7 +147,8 @@ class PathUtils:
             else:
                 # 电视剧原盘下会存在多个目录形如：Spider Man 2021/DIsc1, Spider Man 2021/Disc2
                 for level1 in PathUtils.get_dir_level1_medias(path):
-                    if os.path.exists(os.path.join(level1, "BDMV", "index.bdmv")):
+                    if os.path.exists(
+                            os.path.join(level1, "BDMV", "index.bdmv")):
                         return path
                 return None
         else:

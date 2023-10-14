@@ -870,7 +870,8 @@ class FileTransfer:
                     else:
                         if rmt_mode == RmtMode.UPDATE \
                             and not file_path in new_paths \
-                            and len(file_path.split('\\')) == len(ret_dir_path.split('\\')):
+                            and PathUtils.get_path_level(file_path) > 0 \
+                            and PathUtils.get_path_level(file_path) == PathUtils.get_path_level(ret_dir_path):
                             log.info("【Rmt】目录 %s 已存在，重命名为 %s" %
                                      (file_path, ret_dir_path))
                             new_paths[file_path] = ret_dir_path
@@ -1020,10 +1021,12 @@ class FileTransfer:
                 # 更新模式下可能会改名，把原来的nfo删除
                 if rmt_mode == RmtMode.UPDATE:
                     old_nfo = "%s%s" % (os.path.splitext(file_item)[0], '.nfo')
-                    if old_nfo and os.path.exists(old_nfo):
-                        log.info("【Rmt】删除 %s 旧nfo文件！" %
+                    new_nfo = "%s%s" % (ret_file_path, '.nfo')
+                    if old_nfo and os.path.exists(
+                            old_nfo) and new_nfo != old_nfo:
+                        log.info("【Rmt】替换重命名nfo文件 %s ！" %
                                  os.path.basename(old_nfo))
-                        os.remove(old_nfo)
+                        os.replace(old_nfo, new_nfo)
 
                 # 生成nfo及poster
                 if self._scraper_flag:
