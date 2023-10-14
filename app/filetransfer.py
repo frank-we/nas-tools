@@ -1021,6 +1021,8 @@ class FileTransfer:
                 if rmt_mode == RmtMode.UPDATE:
                     old_nfo = "%s%s" % (os.path.splitext(file_item)[0], '.nfo')
                     if old_nfo and os.path.exists(old_nfo):
+                        log.info("【Rmt】删除 %s 旧nfo文件！" %
+                                 os.path.basename(old_nfo))
                         os.remove(old_nfo)
 
                 # 生成nfo及poster
