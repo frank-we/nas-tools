@@ -18,7 +18,7 @@ class JMeta(object):
     # 媒体原发行标题
     original_title = None
     # 是否无码
-    uncensored = False
+    isuncensored = False
     # 是否流出
     leak = False
     # 是否处理的文件
@@ -94,7 +94,7 @@ class JMeta(object):
                 str = "%s " % self.number
                 if self.cn_sub:
                     str = "%s-C" % str
-                if self.uncensored:
+                if self.isuncensored:
                     str = "%s 【无码】" % str
                 str = "%s %s" % (str, title)
             else:
@@ -138,12 +138,12 @@ class JMeta(object):
         self.leak = json_data.get('leak', False)
         self.cn_sub = json_data.get('cn_sub', False)
         self.series = json_data.get('series', '')
-        self.uncensored = json_data.get('isuncensored', False)
+        self.isuncensored = json_data.get('isuncensored', False)
 
         if self.leak and '流出' not in self.tag:
             self.tag.append('流出')
 
-        if self.uncensored and '无码' not in self.tag:
+        if self.isuncensored and '无码' not in self.tag:
             self.tag.append('无码')
 
         if self.cn_sub and '中文' not in self.tag:

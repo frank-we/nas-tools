@@ -96,7 +96,7 @@ def getNumber(filepath):
                                     filename).group()
             return file_number
         except:
-            return os.path.splitext(filepath.split('/')[-1])[0]
+            return ''
     elif re.search('XXX-AV-\d{4,}', filename.upper()):  # 提取xxx-av-11111
         file_number = re.search('XXX-AV-\d{4,}', filename.upper()).group()
         return file_number
@@ -118,7 +118,7 @@ def getNumber(filepath):
         elif re.search('\d+_\d+', filename):  # 提取类似 111111_000 番号
             file_number = re.search('\d+_\d+', filename).group()
         else:
-            file_number = filename
+            file_number = ''
         return file_number
     else:  # 提取不含减号-的番号，FANZA CID 保留ssni00644，将MIDE139改成MIDE-139
         try:
@@ -129,7 +129,7 @@ def getNumber(filepath):
                 file_number = find_char + '-' + find_num
             return file_number
         except:
-            return os.path.splitext(filepath.split('/')[-1])[0]
+            return ''
 
 
 def getDataFromJSON(file_number,

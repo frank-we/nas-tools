@@ -114,6 +114,8 @@ class Scraper:
         # 标题
         DomUtils.add_node(doc, root, "title", javinfo.title)
         DomUtils.add_node(doc, root, "originaltitle", javinfo.original_title)
+        # 番号
+        DomUtils.add_node(doc, root, "javid", javinfo.number)
         # 简介
         xplot = DomUtils.add_node(doc, root, "plot")
         xplot.appendChild(doc.createCDATASection(javinfo.overview))

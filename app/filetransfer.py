@@ -578,14 +578,32 @@ class FileTransfer:
                         episode_format=episode[0],
                         exts=RMT_MEDIAEXT,
                         filesize=now_filesize)
-                    log.debug("【Rmt】文件清单：" + str(file_list))
+
+                    if len(file_list) > 0 and rmt_mode == RmtMode.UPDATE:
+                        for file in file_list[:]:
+                            nfo = os.path.splitext(file)[0] + '.nfo'
+                            if not os.path.exists(nfo):
+                                file_list.remove(file)
+
                     if len(file_list) == 0:
-                        log.warn(
-                            "【Rmt】%s 目录下未找到媒体文件，当前最小文件大小限制为 %s" %
-                            (in_path, StringUtils.str_filesize(now_filesize)))
-                        return __finish_transfer(
-                            False, "目录下未找到媒体文件，当前最小文件大小限制为 %s" %
-                            StringUtils.str_filesize(now_filesize))
+                        if rmt_mode == RmtMode.UPDATE:
+                            log.warn(
+                                "【Rmt】更新模式下，%s 目录下未找到媒体文件和已刮削的同名nfo文件，当前最小文件大小限制为 %s"
+                                % (in_path,
+                                   StringUtils.str_filesize(now_filesize)))
+                            return __finish_transfer(
+                                False,
+                                "更新模式下，目录下未找到媒体文件和已刮削的同名nfo文件，当前最小文件大小限制为 %s" %
+                                StringUtils.str_filesize(now_filesize))
+                        else:
+                            log.warn("【Rmt】%s 目录下未找到媒体文件，当前最小文件大小限制为 %s" %
+                                     (in_path,
+                                      StringUtils.str_filesize(now_filesize)))
+                            return __finish_transfer(
+                                False, "目录下未找到媒体文件，当前最小文件大小限制为 %s" %
+                                StringUtils.str_filesize(now_filesize))
+
+                    log.debug("【Rmt】文件清单：" + str(file_list))
             # 传入的是个文件
             else:
                 if not os.path.exists(in_path):
@@ -594,6 +612,11 @@ class FileTransfer:
                 if os.path.splitext(in_path)[-1].lower() not in RMT_MEDIAEXT:
                     log.warn("【Rmt】不支持的媒体文件格式，不处理：%s" % in_path)
                     return __finish_transfer(False, "不支持的媒体文件格式")
+                if rmt_mode == RmtMode.UPDATE:
+                    if not os.path.exists(os.path.split(in_path)[0] + '.nfo'):
+                        log.error("【Rmt】该文件同目录下未找到刮削后的同名nfo文件，不支持更新！")
+                        return __finish_transfer(
+                            False, "该文件同目录下未找到刮削后的同名nfo文件，不支持更新！")
                 # 判断是不是原盘文件夹
                 bluray_disk_dir = PathUtils.get_bluray_dir(in_path)
                 if bluray_disk_dir:
@@ -602,6 +625,10 @@ class FileTransfer:
                 else:
                     file_list = [in_path]
         else:
+            if rmt_mode == RmtMode.UPDATE:
+                log.error("【Rmt】更新模式不支持更新文件列表！请选择更新已刮削后的目录！")
+                return __finish_transfer(False, "更新模式不支持更新文件列表！请选择更新已刮削后的目录！")
+
             # 传入的是个文件列表，这些文件是in_path下面的文件
             file_list = files
 
@@ -629,7 +656,12 @@ class FileTransfer:
 
             # API检索出媒体信息，传入一个文件列表，得出每一个文件的名称，这里是当前目录下所有的文件了
             Medias = self.media.get_media_info_on_files(
-                file_list, tmdb_info, media_type, season, episode[0])
+                file_list,
+                tmdb_info,
+                media_type,
+                season,
+                episode[0],
+                had_nfo=rmt_mode == RmtMode.UPDATE)
 
         if not Medias:
             log.error("【Rmt】检索媒体信息出错！")
@@ -667,6 +699,7 @@ class FileTransfer:
                 # 文件路径,文件名
                 file_path, file_name = os.path.split(file_item)
 
+                # 更新模式下，原有文件路径可能被更新为刮削后的名称
                 if rmt_mode == RmtMode.UPDATE:
                     if file_path in new_paths:
                         file_item = os.path.join(new_paths[file_path],
@@ -744,9 +777,15 @@ class FileTransfer:
                 if dist_path and not os.path.exists(dist_path):
                     return __finish_transfer(False, "目录不存在：%s" % dist_path)
 
-                # 判断文件是否已存在，返回：目录存在标志、目录名、文件存在标志、文件名
+                # 更新模式下，直接取视频文件所在文件夹
+                if rmt_mode == RmtMode.UPDATE:
+                    media_path = os.path.dirname(file_item)
+                else:
+                    media_path = dist_path
+
+                # 判断刮削后的文件是否已存在，返回刮削后的：目录存在标志、目录名、文件存在标志、文件名
                 dir_exist_flag, ret_dir_path, file_exist_flag, ret_file_path = self.__is_media_exists(
-                    dist_path, media)
+                    media_path, media, rmt_mode=rmt_mode)
                 # 新文件后缀
                 file_ext = os.path.splitext(file_item)[-1]
                 new_file = ret_file_path
@@ -830,7 +869,10 @@ class FileTransfer:
                         continue
                     else:
                         if rmt_mode == RmtMode.UPDATE \
+                            and not file_path in new_paths \
                             and len(file_path.split('\\')) == len(ret_dir_path.split('\\')):
+                            log.info("【Rmt】目录 %s 已存在，重命名为 %s" %
+                                     (file_path, ret_dir_path))
                             new_paths[file_path] = ret_dir_path
                             o_paths = file_path.split('\\')
                             n_paths = ret_dir_path.split('\\')
@@ -1080,7 +1122,7 @@ class FileTransfer:
             if not ret:
                 print("【Rmt】%s 处理失败：%s" % (path, ret_msg))
 
-    def __is_media_exists(self, media_dest, media):
+    def __is_media_exists(self, media_dest, media, rmt_mode):
         """
         判断媒体文件是否忆存在
         :param media_dest: 媒体文件所在目录
@@ -1099,17 +1141,24 @@ class FileTransfer:
                 media
             ) if media.type == MediaType.MOVIE else self.get_jav_dest_path(
                 media)
-            # 默认目录路径
-            file_path = os.path.join(media_dest, dir_name)
-            # 开启分类时目录路径
-            if media.type != MediaType.JAV and self._movie_category_flag:
-                file_path = os.path.join(media_dest, media.category, dir_name)
-                for m_type in [RMT_FAVTYPE, media.category]:
-                    type_path = os.path.join(media_dest, m_type, dir_name)
-                    # 目录是否存在
-                    if os.path.exists(type_path):
-                        file_path = type_path
-                        break
+
+            # 更新模式下默认已经完成文件夹结构，本次只改变文件夹名称
+            if rmt_mode == RmtMode.UPDATE:
+                file_path = os.path.join(os.path.dirname(media_dest), dir_name)
+            else:
+                # 默认目录路径
+                file_path = os.path.join(media_dest, dir_name)
+                # 开启分类时目录路径
+                if media.type != MediaType.JAV and self._movie_category_flag:
+                    file_path = os.path.join(media_dest, media.category,
+                                             dir_name)
+                    for m_type in [RMT_FAVTYPE, media.category]:
+                        type_path = os.path.join(media_dest, m_type, dir_name)
+                        # 目录是否存在
+                        if os.path.exists(type_path):
+                            file_path = type_path
+                            break
+
             # 返回路径
             ret_dir_path = file_path
             # 路径存在标志
@@ -1130,6 +1179,29 @@ class FileTransfer:
         else:
             # 目录名称
             dir_name, season_name, file_name = self.get_tv_dest_path(media)
+
+            # 更新模式下默认已经完成文件夹结构，本次只改变文件夹名称
+            if rmt_mode == RmtMode.UPDATE:
+                tv_root = PathUtils.get_parent_paths(media_dest, 2)
+                tv_show = os.path.join(tv_root, 'tvshow.nfo')
+                if os.path.exists(tv_show):
+                    tv_root = os.path.dirname(tv_root)
+                    media_path = os.path.join(media_dest, dir_name)
+                    season_dir = os.path.join(media_path, season_name)
+                    # 返回目录路径
+                    ret_dir_path = season_dir
+                    # 目录是否存在
+                    dir_exist_flag = os.path.exists(season_dir)
+
+                    ret_file_path = os.path.join(season_dir, file_name)
+                    # 文件存在标志
+                    for ext in RMT_MEDIAEXT:
+                        ext_dest = "%s%s" % (ret_file_path, ext)
+                        if os.path.exists(ext_dest):
+                            file_exist_flag = True
+                            ret_file_path = ext_dest
+                return dir_exist_flag, ret_dir_path, file_exist_flag, ret_file_path
+
             # 剧集目录
             if (media.type == MediaType.TV and
                     self._tv_category_flag) or (media.type == MediaType.ANIME

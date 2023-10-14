@@ -20,11 +20,11 @@ class JavMedia:
 
     def get_media_info_on_files(self, file_list, number=None):
         """
-        根据文件清单，搜刮TMDB信息，用于文件名称的识别
+        根据文件清单，搜刮信息，用于文件名称的识别
         :param file_list: 文件清单，如果是列表也可以是单个文件，也可以是一个目录
         :param in_path: 转移的路径，可能是一个文件也可以是一个目录
         :param number: 番号
-        :return: 带有TMDB信息的每个文件对应的MetaInfo对象字典
+        :return: 带有信息的每个文件对应的MetaInfo对象字典
         """
         count = 0
         jav_domain = str(self.config.get('jav_domain'))
@@ -41,6 +41,10 @@ class JavMedia:
             try:
                 fileName = os.path.basename(file_path)
                 jMeta = JMeta(fileName, number=number)
+                if not jMeta.get_number():
+                    log.error('【Rmt】Error in Jav: %s 番号无法识别！' % fileName)
+                    continue
+
                 log.info("【Rmt】开始刮削： [" + file_path + "], the number is [" +
                          jMeta.get_number() + "]")
                 result = self.Core_Main(filepath=file_path,
@@ -52,7 +56,7 @@ class JavMedia:
                 else:
                     log.warn(r'【Rmt】%s 刮削失败！' % fileName)
             except Exception as error_info:
-                log.error('【Rmt】Error in AVDC_Main: ' + str(error_info))
+                log.error('【Rmt】Error in Jav: ' + str(error_info))
                 ExceptionUtils.exception_traceback(error_info)
 
         return return_media_infos
