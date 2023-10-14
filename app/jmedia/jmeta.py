@@ -24,7 +24,7 @@ class JMeta(object):
     # 是否处理的文件
     fileflag = False
     # 原字符串
-    org_string = None
+    org_name = None
     # 副标题
     subtitle = None
     # 是否有中文字幕
@@ -70,7 +70,7 @@ class JMeta(object):
         if not title:
             return
 
-        self.org_string = title
+        self.org_name = title
 
         re_res = re.search(r"%s" % self._part_re, title, re.IGNORECASE)
         if re_res:
@@ -91,12 +91,7 @@ class JMeta(object):
         title = self.cn_name if self.cn_name else self.title
         if title:
             if self.number:
-                str = "%s " % self.number
-                if self.cn_sub:
-                    str = "%s-C" % str
-                if self.isuncensored:
-                    str = "%s 【无码】" % str
-                str = "%s %s" % (str, title)
+                str = "%s %s" % (self.number, title)
             else:
                 str = title
         return str

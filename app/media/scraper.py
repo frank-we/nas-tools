@@ -112,8 +112,9 @@ class Scraper:
             doc, root, "dateadded",
             time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
         # 标题
-        DomUtils.add_node(doc, root, "title", javinfo.title)
+        DomUtils.add_node(doc, root, "title", javinfo.get_title_string())
         DomUtils.add_node(doc, root, "originaltitle", javinfo.original_title)
+        DomUtils.add_node(doc, root, "orgname", javinfo.org_name)
         # 番号
         DomUtils.add_node(doc, root, "javid", javinfo.number)
         # 简介
