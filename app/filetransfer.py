@@ -870,8 +870,7 @@ class FileTransfer:
                     else:
                         if rmt_mode == RmtMode.UPDATE \
                             and not file_path in new_paths \
-                            and PathUtils.get_path_level(file_path) > 0 \
-                            and PathUtils.get_path_level(file_path) == PathUtils.get_path_level(ret_dir_path):
+                            and len(file_path.split(os.sep)) == len(ret_dir_path.split(os.sep)):
                             log.info("【Rmt】目录 %s 已存在，重命名为 %s" %
                                      (file_path, ret_dir_path))
                             new_paths[file_path] = ret_dir_path

@@ -116,18 +116,7 @@ class PathUtils:
             if path == os.path.dirname(path):
                 break
         return False
-
-    @staticmethod
-    def get_path_level(path):
-        """
-        判断路径层级
-        """
-        level = 1
-        while path != os.path.dirname(path):
-            path = os.path.dirname(path)
-            level += 1
-        return level
-
+    
     @staticmethod
     def get_bluray_dir(path):
         """
