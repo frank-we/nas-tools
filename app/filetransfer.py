@@ -1184,9 +1184,13 @@ class FileTransfer:
             if rmt_mode == RmtMode.UPDATE:
                 tv_root = PathUtils.get_parent_paths(media_dest, 2)
                 tv_show = os.path.join(tv_root, 'tvshow.nfo')
+                if not os.path.exists(tv_show):
+                    tv_root = PathUtils.get_parent_paths(media_dest, 1)
+                    tv_show = os.path.join(tv_root, 'tvshow.nfo')
+
                 if os.path.exists(tv_show):
                     tv_root = os.path.dirname(tv_root)
-                    media_path = os.path.join(media_dest, dir_name)
+                    media_path = os.path.join(tv_root, dir_name)
                     season_dir = os.path.join(media_path, season_name)
                     # 返回目录路径
                     ret_dir_path = season_dir

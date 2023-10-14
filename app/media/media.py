@@ -899,6 +899,8 @@ class Media:
                                     file_path, 2)
                                 if os.path.exists(
                                         os.path.join(dir_name, 'tvshow.nfo')):
+                                    nfo_path = os.path.join(
+                                        dir_name, 'tvshow.nfo')
                                     tvshow_tree = minidom.parse(nfo_path)
                                     rootNode = tvshow_tree.documentElement
                                     tmdbid = DomUtils.tag_value(
