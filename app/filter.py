@@ -96,7 +96,10 @@ class Filter:
         """
         if not rulegroup:
             rulegroup = self.get_rule_groups(default=True)
-        first_order = min([int(rule_info.get("pri")) for rule_info in self.get_rules(groupid=rulegroup)] or [0])
+        first_order = min([
+            int(rule_info.get("pri"))
+            for rule_info in self.get_rules(groupid=rulegroup)
+        ] or [0])
         return 100 - first_order
 
     def check_rules(self, meta_info, rulegroup=None):
@@ -138,7 +141,8 @@ class Filter:
                 for include in includes:
                     if not include:
                         continue
-                    if not re.search(r'%s' % include.strip(), title, re.IGNORECASE):
+                    if not re.search(r'%s' % include.strip(), title,
+                                     re.IGNORECASE):
                         include_flag = False
                         break
                 if not include_flag:
@@ -153,9 +157,11 @@ class Filter:
                     if not exclude:
                         continue
                     exclude_count += 1
-                    if not re.search(r'%s' % exclude.strip(), title, re.IGNORECASE):
+                    if re.search(r'%s' % exclude.strip(), title,
+                                 re.IGNORECASE):
                         exclude_flag = True
-                if exclude_count > 0 and not exclude_flag:
+                        break
+                if exclude_count > 0 and exclude_flag:
                     rule_match = False
             # 大小
             sizes = filter_info.get('size')
@@ -163,22 +169,25 @@ class Filter:
                 meta_info.size = StringUtils.num_filesize(meta_info.size)
                 if sizes.find(',') != -1:
                     sizes = sizes.split(',')
-                    if sizes[0].isdigit():
-                        begin_size = int(sizes[0].strip())
+                    if re.search(r'^[0-9]+[0-9\.]*$', sizes[0].strip(),
+                                 re.IGNORECASE):
+                        begin_size = float(sizes[0].strip())
                     else:
                         begin_size = 0
-                    if sizes[1].isdigit():
-                        end_size = int(sizes[1].strip())
+                    if re.search(r'^[0-9]+[0-9\.]*$', sizes[1].strip(),
+                                 re.IGNORECASE):
+                        end_size = float(sizes[1].strip())
                     else:
                         end_size = 0
                 else:
                     begin_size = 0
-                    if sizes.isdigit():
-                        end_size = int(sizes.strip())
+                    if re.search(r'^[0-9]+[0-9\.]*$', sizes, re.IGNORECASE):
+                        end_size = float(sizes.strip())
                     else:
                         end_size = 0
                 if meta_info.type == MediaType.MOVIE:
-                    if not begin_size * 1024 ** 3 <= int(meta_info.size) <= end_size * 1024 ** 3:
+                    if not begin_size * 1024**3 <= int(
+                            meta_info.size) <= end_size * 1024**3:
                         rule_match = False
                 else:
                     if meta_info.total_episodes \
@@ -259,25 +268,28 @@ class Filter:
         """
         # 过滤质量
         if filter_args.get("restype"):
-            restype_re = ModuleConf.TORRENT_SEARCH_PARAMS["restype"].get(filter_args.get("restype"))
+            restype_re = ModuleConf.TORRENT_SEARCH_PARAMS["restype"].get(
+                filter_args.get("restype"))
             if not meta_info.get_edtion_string():
                 return False, 0, f"{meta_info.org_string} 不符合质量 {filter_args.get('restype')} 要求"
-            if restype_re and not re.search(r"%s" % restype_re, meta_info.get_edtion_string(), re.I):
+            if restype_re and not re.search(
+                    r"%s" % restype_re, meta_info.get_edtion_string(), re.I):
                 return False, 0, f"{meta_info.org_string} 不符合质量 {filter_args.get('restype')} 要求"
         # 过滤分辨率
         if filter_args.get("pix"):
-            pix_re = ModuleConf.TORRENT_SEARCH_PARAMS["pix"].get(filter_args.get("pix"))
+            pix_re = ModuleConf.TORRENT_SEARCH_PARAMS["pix"].get(
+                filter_args.get("pix"))
             if not meta_info.resource_pix:
                 return False, 0, f"{meta_info.org_string} 不符合分辨率 {filter_args.get('pix')} 要求"
-            if pix_re and not re.search(r"%s" % pix_re, meta_info.resource_pix, re.I):
+            if pix_re and not re.search(r"%s" % pix_re, meta_info.resource_pix,
+                                        re.I):
                 return False, 0, f"{meta_info.org_string} 不符合分辨率 {filter_args.get('pix')} 要求"
         # 过滤制作组/字幕组
         if filter_args.get("team"):
             team = filter_args.get("team")
             if not meta_info.resource_team:
                 resource_team = self.rg_matcher.match(
-                    title=meta_info.org_string,
-                    groups=team)
+                    title=meta_info.org_string, groups=team)
                 if not resource_team:
                     return False, 0, f"{meta_info.org_string} 不符合制作组/字幕组 {team} 要求"
                 else:
@@ -287,9 +299,11 @@ class Filter:
         # 过滤促销
         if filter_args.get("sp_state"):
             ul_factor, dl_factor = filter_args.get("sp_state").split()
-            if uploadvolumefactor and ul_factor not in ("*", str(uploadvolumefactor)):
+            if uploadvolumefactor and ul_factor not in (
+                    "*", str(uploadvolumefactor)):
                 return False, 0, f"{meta_info.org_string} 不符合促销要求"
-            if downloadvolumefactor and dl_factor not in ("*", str(downloadvolumefactor)):
+            if downloadvolumefactor and dl_factor not in (
+                    "*", str(downloadvolumefactor)):
                 return False, 0, f"{meta_info.org_string} 不符合促销要求"
         # 过滤包含
         if filter_args.get("include"):
@@ -309,21 +323,16 @@ class Filter:
         # 过滤过滤规则，-1表示不使用过滤规则，空则使用默认过滤规则
         if filter_args.get("rule"):
             # 已设置默认规则
-            match_flag, order_seq, rule_name = self.check_rules(meta_info, filter_args.get("rule"))
+            match_flag, order_seq, rule_name = self.check_rules(
+                meta_info, filter_args.get("rule"))
             match_msg = "%s 大小：%s 促销：%s 不符合订阅/站点过滤规则 %s 要求" % (
-                meta_info.org_string,
-                StringUtils.str_filesize(meta_info.size),
-                meta_info.get_volume_factor_string(),
-                rule_name
-            )
+                meta_info.org_string, StringUtils.str_filesize(meta_info.size),
+                meta_info.get_volume_factor_string(), rule_name)
             return match_flag, order_seq, match_msg
         else:
             # 默认过滤规则
             match_flag, order_seq, rule_name = self.check_rules(meta_info)
             match_msg = "%s 大小：%s 促销：%s 不符合默认过滤规则 %s 要求" % (
-                meta_info.org_string,
-                StringUtils.str_filesize(meta_info.size),
-                meta_info.get_volume_factor_string(),
-                rule_name
-            )
+                meta_info.org_string, StringUtils.str_filesize(meta_info.size),
+                meta_info.get_volume_factor_string(), rule_name)
             return match_flag, order_seq, match_msg
