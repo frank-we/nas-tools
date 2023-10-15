@@ -153,7 +153,8 @@ class Sync(object):
         :param path: 文件路径
         :param filterGroupId: 过滤规则组id
         """
-        if not path or not os.path.exists(path) or not filterGroupId:
+        if not path or not os.path.exists(path) or not os.path.isfile(
+                path) or not filterGroupId:
             return True
         media_info = MetaInfo(title=os.path.basename(path),
                               customWordGroupId=customWordGroupId)
