@@ -147,7 +147,7 @@ class Sync(object):
                 else:
                     log.error("【Sync】%s 目录不存在！" % monpath)
 
-    def __check_file_rule(self, path, filterGroupId):
+    def __check_file_rule(self, path, filterGroupId, customWordGroupId=None):
         """
         使用过滤规则筛选文件
         :param path: 文件路径
@@ -155,7 +155,8 @@ class Sync(object):
         """
         if not path or not os.path.exists(path) or not filterGroupId:
             return True
-        media_info = MetaInfo(title=os.path.basename(path))
+        media_info = MetaInfo(title=os.path.basename(path),
+                              customWordGroupId=customWordGroupId)
         media_info.size = os.path.getsize(path)
         # 过滤规则过滤
         match, order_seq, rule_name = self.filter.check_rules(
@@ -247,8 +248,10 @@ class Sync(object):
                 customWordGroupId = target_dirs.get('customWordId')
                 filterGroupId = target_dirs.get('filterGroupId')
 
-                if not self.__check_file_rule(path=event_path,
-                                              filterGroupId=filterGroupId):
+                if not self.__check_file_rule(
+                        path=event_path,
+                        filterGroupId=filterGroupId,
+                        customWordGroupId=customWordGroupId):
                     return
 
                 # 只做硬链接，不做识别重命名
@@ -429,8 +432,10 @@ class Sync(object):
                         continue
 
                     # 过滤规则过滤
-                    if not self.__check_file_rule(path=link_file,
-                                                  filterGroupId=filterGroupId):
+                    if not self.__check_file_rule(
+                            path=link_file,
+                            filterGroupId=filterGroupId,
+                            customWordGroupId=customWordGroupId):
                         continue
 
                     log.info("【Sync】开始同步 %s" % link_file)
@@ -454,8 +459,10 @@ class Sync(object):
                         continue
 
                     # 过滤规则过滤
-                    if not self.__check_file_rule(path=path,
-                                                  filterGroupId=filterGroupId):
+                    if not self.__check_file_rule(
+                            path=path,
+                            filterGroupId=filterGroupId,
+                            customWordGroupId=customWordGroupId):
                         continue
 
                     ret, ret_msg = self.filetransfer.transfer_media(
