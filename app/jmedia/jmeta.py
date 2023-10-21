@@ -135,6 +135,9 @@ class JMeta(object):
         self.series = json_data.get('series', '')
         self.isuncensored = json_data.get('isuncensored', False)
 
+        if len(self.title) > 20:
+            self.title = "%s…" % self.title[:20]
+
         if self.leak and '流出' not in self.tag:
             self.tag.append('流出')
 

@@ -16,7 +16,8 @@ class Gotify(_IMessageClient):
 
     def init_config(self):
         if self._client_config:
-            self._server = StringUtils.get_base_url(self._client_config.get('server'))
+            self._server = StringUtils.get_base_url(
+                self._client_config.get('server'))
             self._token = self._client_config.get('token')
             try:
                 self._priority = int(self._client_config.get('priority'))
@@ -46,9 +47,12 @@ class Gotify(_IMessageClient):
             sc_url = "%s/message?token=%s" % (self._server, self._token)
             sc_data = {
                 "title": title,
-                "message": text,
+                "message": f"![]({image})\n\r{text}" if image else text,
                 "priority": self._priority,
                 "extras": {
+                    "client::display": {
+                        "contentType": "text/markdown"
+                    },
                     "client::notification": {
                         "click": {
                             "url": url
@@ -56,7 +60,8 @@ class Gotify(_IMessageClient):
                     },
                 }
             }
-            res = RequestUtils(content_type="application/json").post_res(sc_url, json=sc_data)
+            res = RequestUtils(content_type="application/json").post_res(
+                sc_url, json=sc_data)
             if res and res.status_code == 200:
                 return True, "发送成功"
             elif res:

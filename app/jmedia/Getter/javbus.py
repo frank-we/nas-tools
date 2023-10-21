@@ -10,19 +10,16 @@ from app.jmedia.Function.getHtml import post_html
 
 def getActorPhoto(htmlcode, domain):
     html = etree.fromstring(htmlcode, etree.HTMLParser())
-    counts = len(html.xpath('//div[@id="avatar-waterfall"]/a'))
+    titles = html.xpath('//div[@class="star-name"]/a/text()')
+    photos = html.xpath('//div[@class="star-name"]/../a/img/@src')
+    counts = len(titles)
     d = {}
     if counts == 0:
         return d
-    for count in range(1, counts + 1):
-        p = domain + str(
-            html.xpath('//*[@id="avatar-waterfall"]/a[' + str(count) +
-                       ']/div/img/@src')).strip(" ['']")
-        t = str(
-            html.xpath('//*[@id="avatar-waterfall"]/a[' + str(count) +
-                       ']/div/img/@title')).strip(" ['']")
-        p2 = {t: p}
-        d.update(p2)
+    for count in range(counts):
+        p = domain + photos[count].strip(" ['']")
+        t = titles[count].strip(" ['']")
+        d[t] = p
     return d
 
 

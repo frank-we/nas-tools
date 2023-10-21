@@ -222,34 +222,34 @@ class Message(object):
         """
         msg_title = f"{can_item.get_title_ep_string()} 开始下载"
         msg_text = f"{can_item.get_star_string()}"
-        msg_text = f"{msg_text}\n来自：{in_from.value}"
+        msg_text = f"{msg_text}\n\r来自：{in_from.value}"
         if can_item.user_name:
-            msg_text = f"{msg_text}\n用户：{can_item.user_name}"
+            msg_text = f"{msg_text}\n\r用户：{can_item.user_name}"
         if can_item.site:
             if in_from == SearchType.USERRSS:
-                msg_text = f"{msg_text}\n任务：{can_item.site}"
+                msg_text = f"{msg_text}\n\r任务：{can_item.site}"
             else:
-                msg_text = f"{msg_text}\n站点：{can_item.site}"
+                msg_text = f"{msg_text}\n\r站点：{can_item.site}"
         if can_item.get_resource_type_string():
-            msg_text = f"{msg_text}\n质量：{can_item.get_resource_type_string()}"
+            msg_text = f"{msg_text}\n\r质量：{can_item.get_resource_type_string()}"
         if can_item.size:
             if str(can_item.size).isdigit():
                 size = StringUtils.str_filesize(can_item.size)
             else:
                 size = can_item.size
-            msg_text = f"{msg_text}\n大小：{size}"
+            msg_text = f"{msg_text}\n\r大小：{size}"
         if can_item.org_string:
-            msg_text = f"{msg_text}\n种子：{can_item.org_string}"
+            msg_text = f"{msg_text}\n\r种子：{can_item.org_string}"
         if can_item.seeders:
-            msg_text = f"{msg_text}\n做种数：{can_item.seeders}"
-        msg_text = f"{msg_text}\n促销：{can_item.get_volume_factor_string()}"
+            msg_text = f"{msg_text}\n\r做种数：{can_item.seeders}"
+        msg_text = f"{msg_text}\n\r促销：{can_item.get_volume_factor_string()}"
         if can_item.hit_and_run:
-            msg_text = f"{msg_text}\nHit&Run：是"
+            msg_text = f"{msg_text}\n\rHit&Run：是"
         if can_item.description:
             html_re = re.compile(r'<[^>]+>', re.S)
             description = html_re.sub('', can_item.description)
             can_item.description = re.sub(r'<[^>]+>', '', description)
-            msg_text = f"{msg_text}\n描述：{can_item.description}"
+            msg_text = f"{msg_text}\n\r描述：{can_item.description}"
         # 插入消息中心
         self.messagecenter.insert_system_message(level="INFO",
                                                  title=msg_title,
@@ -280,12 +280,12 @@ class Message(object):
             msg_str = "类型：电影"
         if hasattr(media_info, 'category'):
             if category_flag:
-                msg_str = f"{msg_str}，类别：{media_info.category}"
+                msg_str = f"{msg_str}\n\r类别：{media_info.category}"
         if media_info.get_resource_type_string():
-            msg_str = f"{msg_str}，质量：{media_info.get_resource_type_string()}"
-        msg_str = f"{msg_str}，大小：{StringUtils.str_filesize(media_info.size)}，来自：{in_from.value}"
+            msg_str = f"{msg_str}\n\r质量：{media_info.get_resource_type_string()}"
+        msg_str = f"{msg_str}\n\r大小：{StringUtils.str_filesize(media_info.size)}\n\r来自：{in_from.value}"
         if exist_filenum != 0:
-            msg_str = f"{msg_str}，{exist_filenum}个文件已存在"
+            msg_str = f"{msg_str}\n\r{exist_filenum}个文件已存在"
         # 插入消息中心
         self.messagecenter.insert_system_message(level="INFO",
                                                  title=msg_title,
@@ -313,11 +313,11 @@ class Message(object):
             else:
                 msg_str = f"类型：{item_info.type.value}"
             if item_info.category:
-                msg_str = f"{msg_str}，类别：{item_info.category}"
+                msg_str = f"{msg_str}\n\r类别：{item_info.category}"
             if item_info.total_episodes == 1:
-                msg_str = f"{msg_str}，大小：{StringUtils.str_filesize(item_info.size)}，来自：{in_from.value}"
+                msg_str = f"{msg_str}\n\r大小：{StringUtils.str_filesize(item_info.size)}\n\r来自：{in_from.value}"
             else:
-                msg_str = f"{msg_str}，总大小：{StringUtils.str_filesize(item_info.size)}，来自：{in_from.value}"
+                msg_str = f"{msg_str}\n\r总大小：{StringUtils.str_filesize(item_info.size)}\n\r来自：{in_from.value}"
             # 插入消息中心
             self.messagecenter.insert_system_message(level="INFO",
                                                      title=msg_title,
@@ -337,7 +337,7 @@ class Message(object):
         """
         title = "添加下载任务失败：%s %s" % (item.get_title_string(),
                                     item.get_season_episode_string())
-        text = f"站点：{item.site}\n种子名称：{item.org_string}\n种子链接：{item.enclosure}\n错误信息：{error_msg}"
+        text = f"站点：{item.site}\n\r种子名称：{item.org_string}\n\r种子链接：{item.enclosure}\n\r错误信息：{error_msg}"
         # 插入消息中心
         self.messagecenter.insert_system_message(level="INFO",
                                                  title=title,
@@ -361,9 +361,9 @@ class Message(object):
         msg_str = f"类型：{media_info.type.value}"
         if media_info.vote_average:
             msg_str = f"{msg_str}，{media_info.get_vote_string()}"
-        msg_str = f"{msg_str}，来自：{in_from.value}"
+        msg_str = f"{msg_str}\n\r来自：{in_from.value}"
         if media_info.user_name:
-            msg_str = f"{msg_str}，用户：{media_info.user_name}"
+            msg_str = f"{msg_str}\n\r用户：{media_info.user_name}"
         # 插入消息中心
         self.messagecenter.insert_system_message(level="INFO",
                                                  title=msg_title,
@@ -412,7 +412,7 @@ class Message(object):
         if not msgs:
             return
         title = "站点签到"
-        text = "\n".join(msgs)
+        text = "\n\r".join(msgs)
         # 插入消息中心
         self.messagecenter.insert_system_message(level="INFO",
                                                  title=title,
@@ -446,7 +446,7 @@ class Message(object):
         if not path or not count:
             return
         title = f"【{count} 个文件入库失败】"
-        text = f"源路径：{path}\n原因：{text}"
+        text = f"源路径：{path}\n\r原因：{text}"
         # 插入消息中心
         self.messagecenter.insert_system_message(level="INFO",
                                                  title=title,
