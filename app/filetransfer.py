@@ -1430,20 +1430,27 @@ class FileTransfer:
                 return unknown_path
         return self._unknown_path[0]
 
-    def __custom_word(self, path, customWordGroupId):
+    def __custom_word(self, path, customWordGroupId, src_path):
         """
         使用自定义识别词重命名
         """
         if not path or not os.path.exists(path) or not customWordGroupId:
             return path, False
         # list = os.path.split(path)
-        result, msg, flag = self.wordsHelper.processByGid(
-            title=path, gid=customWordGroupId)
-        if not flag and msg:
-            log.warn("【Sync】自定义识别失败 %s" % msg)
-            return path, False
-        else:
-            return result, True
+        path_n = path.replace(src_path, '')
+        n_paths = path_n.split(os.sep)
+        n_path = n_paths[0]
+        count = len(n_paths)
+        for i in range(1, count):
+            result, msg, flag = self.wordsHelper.processByGid(
+                title=n_paths[i], gid=customWordGroupId)
+            if not flag and msg:
+                log.warn("【Sync】自定义识别失败 %s" % msg)
+                return path, False
+            else:
+                n_path = os.path.join(n_path, result)
+        n_path = os.path.join(src_path, n_path)
+        return n_path, True
 
     def link_sync_file(self, src_path, in_file, target_dir, sync_transfer_mode,
                        customWordGroupId):
@@ -1460,7 +1467,9 @@ class FileTransfer:
         flag = False
         if customWordGroupId:
             path, flag = self.__custom_word(
-                path=inFile, customWordGroupId=customWordGroupId)
+                src_path=src_path,
+                path=inFile,
+                customWordGroupId=customWordGroupId)
             if flag:
                 log.info("【Sync】自定义识别词应用成功 %s ==> %s" % (inFile, path))
             inFile = path
