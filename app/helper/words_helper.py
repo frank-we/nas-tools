@@ -153,6 +153,7 @@ class WordsHelper:
         custom_words = self.dbhelper.get_custom_words(gid=gid)
         msg = ''
         flag = None
+        title, ext = os.path.splitext(title)
         result = title
         for custom_word in custom_words:
             # 屏蔽
@@ -237,6 +238,7 @@ class WordsHelper:
                     msg = (f"自定义集偏移词 {offset_word} 格式有误：{msg}")
                     break
 
+        result = f"{result}{ext}" if len(ext) > 0 else result
         return result, msg, flag
 
     @staticmethod
