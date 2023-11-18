@@ -419,6 +419,15 @@
                 </label>
               </div>
             </div>
+            <div class="col-xl-4">
+              <div class="mb-3">
+                <label class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="seeders">
+                  <span class="form-check-label">过滤做种数为0 <span class="form-help" title="开启后过滤搜索中做种数为0的结果。"
+                      data-bs-toggle="tooltip">?</span></span>
+                </label>
+              </div>
+            </div>
           </div>
           <div class="row">
             <div class="col-lg-3">
@@ -1233,6 +1242,7 @@
       const season = $("#rss_season").val();
       const fuzzy_match = $("#fuzzy_match").prop("checked");
       const mediaid = $("#rss_tmdbid").val();
+      const seeders = $("#seeders").prop("checked");
       const over_edition = $("#over_edition").prop("checked");
       const filter_restype = $("#rss_restype").val();
       const filter_pix = $("#rss_pix").val();
@@ -1310,6 +1320,7 @@
           "season": season,
           "fuzzy_match": fuzzy_match,
           "mediaid": mediaid,
+          "seeders": seeders,
           "over_edition": over_edition,
           "total_ep": total_ep,
           "current_ep": current_ep,
@@ -1391,6 +1402,7 @@
       $("#rss_keyword").val("");
       $("#rss_tmdbid").val("");
       $("#fuzzy_match").prop("checked", false);
+      $("#seeders").prop("checked", true);
       $("#over_edition").prop("checked", false);
       $("#rss_season").val("");
       $("#rss_total_ep").val("");
@@ -1486,6 +1498,11 @@
           } else {
             $("#fuzzy_match").prop("checked", true);
             $("#rss_search_sites_div").hide();
+          }
+          if (ret.detail.seeders) {
+            $("#seeders").prop("checked", true);
+          } else {
+            $("#seeders").prop("checked", false);
           }
           if (ret.detail.over_edition) {
             $("#over_edition").prop("checked", true);

@@ -1464,6 +1464,7 @@ class WebAction:
         mediaid = data.get("mediaid")
         rss_sites = data.get("rss_sites")
         search_sites = data.get("search_sites")
+        seeders = data.get("seeders")
         over_edition = data.get("over_edition")
         filter_restype = data.get("filter_restype")
         filter_pix = data.get("filter_pix")
@@ -1492,6 +1493,7 @@ class WebAction:
                     mediaid=mediaid,
                     rss_sites=rss_sites,
                     search_sites=search_sites,
+                    seeders=seeders,
                     over_edition=over_edition,
                     filter_restype=filter_restype,
                     filter_pix=filter_pix,
@@ -1513,6 +1515,7 @@ class WebAction:
                 mediaid=mediaid,
                 rss_sites=rss_sites,
                 search_sites=search_sites,
+                seeders=seeders,
                 over_edition=over_edition,
                 filter_restype=filter_restype,
                 filter_pix=filter_pix,

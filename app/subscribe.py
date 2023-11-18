@@ -48,6 +48,7 @@ class Subscribe:
                           mediaid=None,
                           rss_sites=None,
                           search_sites=None,
+                          seeders=None,
                           over_edition=False,
                           filter_restype=None,
                           filter_pix=None,
@@ -70,6 +71,7 @@ class Subscribe:
         :param mediaid: 媒体ID，DB:/BG:/TMDBID
         :param rss_sites: 订阅站点列表，为空则表示全部站点
         :param search_sites: 搜索站点列表，为空则表示全部站点
+        :param seeders: 是否过滤做种数为0的种子链接
         :param over_edition: 是否选版
         :param filter_restype: 质量过滤
         :param filter_pix: 分辨率过滤
@@ -88,6 +90,7 @@ class Subscribe:
         year = int(year) if str(year).isdigit() else ""
         rss_sites = rss_sites or []
         search_sites = search_sites or []
+        seeders = 1 if seeders else 0
         over_edition = 1 if over_edition else 0
         filter_rule = int(filter_rule) if str(filter_rule).isdigit() else None
         total_ep = int(total_ep) if str(total_ep).isdigit() else None
@@ -151,6 +154,7 @@ class Subscribe:
                                                    state=state,
                                                    rss_sites=rss_sites,
                                                    search_sites=search_sites,
+                                                   seeders=seeders,
                                                    over_edition=over_edition,
                                                    filter_restype=filter_restype,
                                                    filter_pix=filter_pix,
@@ -172,6 +176,7 @@ class Subscribe:
                                                       state=state,
                                                       rss_sites=rss_sites,
                                                       search_sites=search_sites,
+                                                      seeders=seeders,
                                                       over_edition=over_edition,
                                                       filter_restype=filter_restype,
                                                       filter_pix=filter_pix,
@@ -197,6 +202,7 @@ class Subscribe:
                                                       state="R",
                                                       rss_sites=rss_sites,
                                                       search_sites=search_sites,
+                                                      seeders=seeders,
                                                       over_edition=over_edition,
                                                       filter_restype=filter_restype,
                                                       filter_pix=filter_pix,
@@ -215,6 +221,7 @@ class Subscribe:
                                                    state="R",
                                                    rss_sites=rss_sites,
                                                    search_sites=search_sites,
+                                                   seeders=seeders,
                                                    over_edition=over_edition,
                                                    filter_restype=filter_restype,
                                                    filter_pix=filter_pix,
@@ -302,6 +309,7 @@ class Subscribe:
             tmdbid = rss_movie.TMDBID
             rss_sites = json.loads(rss_movie.RSS_SITES) if rss_movie.RSS_SITES else []
             search_sites = json.loads(rss_movie.SEARCH_SITES) if rss_movie.SEARCH_SITES else []
+            seeders = True if rss_movie.SEEDERS == 1 else False
             over_edition = True if rss_movie.OVER_EDITION == 1 else False
             filter_restype = rss_movie.FILTER_RESTYPE
             filter_pix = rss_movie.FILTER_PIX
@@ -339,6 +347,7 @@ class Subscribe:
                 "overview": rss_movie.DESC,
                 "rss_sites": rss_sites,
                 "search_sites": search_sites,
+                "seeders": seeders,
                 "over_edition": over_edition,
                 "filter_restype": filter_restype,
                 "filter_pix": filter_pix,
@@ -367,6 +376,7 @@ class Subscribe:
             tmdbid = rss_tv.TMDBID
             rss_sites = json.loads(rss_tv.RSS_SITES) if rss_tv.RSS_SITES else []
             search_sites = json.loads(rss_tv.SEARCH_SITES) if rss_tv.SEARCH_SITES else []
+            seeders = True if rss_tv.SEEDERS == 1 else False
             over_edition = True if rss_tv.OVER_EDITION == 1 else False
             filter_restype = rss_tv.FILTER_RESTYPE
             filter_pix = rss_tv.FILTER_PIX
@@ -409,6 +419,7 @@ class Subscribe:
                 "overview": rss_tv.DESC,
                 "rss_sites": rss_sites,
                 "search_sites": search_sites,
+                "seeders": seeders,
                 "over_edition": over_edition,
                 "filter_restype": filter_restype,
                 "filter_pix": filter_pix,
@@ -626,7 +637,8 @@ class Subscribe:
                 "pix": rss_info.get('filter_pix'),
                 "team": rss_info.get('filter_team'),
                 "rule": rss_info.get('filter_rule'),
-                "site": rss_info.get("search_sites")
+                "site": rss_info.get("search_sites"),
+                "seeders": rss_info.get("seeders")
             }
             search_result, _, _, _ = self.searcher.search_one_media(
                 media_info=media_info,
@@ -751,7 +763,8 @@ class Subscribe:
                 "pix": rss_info.get('filter_pix'),
                 "team": rss_info.get('filter_team'),
                 "rule": rss_info.get('filter_rule'),
-                "site": rss_info.get("search_sites")
+                "site": rss_info.get("search_sites"),
+                "seeders": rss_info.get("seeders")
             }
             search_result, no_exists, _, _ = self.searcher.search_one_media(
                 media_info=media_info,
