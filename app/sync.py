@@ -292,7 +292,8 @@ class Sync(object):
                             target_dir=target_path,
                             unknown_dir=unknown_path,
                             domain=domain,
-                            rmt_mode=sync_mode)
+                            rmt_mode=sync_mode,
+                            customWordGroupId=customWordGroupId)
                         if not ret:
                             log.warn("【Sync】%s 转移失败：%s" %
                                      (event_path, ret_msg))
@@ -317,7 +318,8 @@ class Sync(object):
                                     'unknown': unknown_path,
                                     'syncmod': sync_mode,
                                     'domain': domain,
-                                    'files': [event_path]
+                                    'files': [event_path],
+                                    'customWordGroupId': customWordGroupId
                                 }
                         finally:
                             lock.release()
@@ -353,6 +355,7 @@ class Sync(object):
                     unknown_path = target_info.get('unknown')
                     sync_mode = target_info.get('syncmod')
                     domain = target_info.get('domain')
+                    customWordGroupId = target_dirs.get('customWordId')
                     # 判断是否根目录
                     is_root_path = False
                     for m_path in self.sync_dir_config.keys():
@@ -367,7 +370,8 @@ class Sync(object):
                         unknown_dir=unknown_path,
                         rmt_mode=sync_mode,
                         domain=domain,
-                        root_path=is_root_path)
+                        root_path=is_root_path,
+                        customWordGroupId=customWordGroupId)
                     if not ret:
                         log.warn("【Sync】%s转移失败：%s" % (path, ret_msg))
                 self._need_sync_paths.pop(path)
@@ -472,7 +476,8 @@ class Sync(object):
                         target_dir=target_path,
                         unknown_dir=unknown_path,
                         domain=domain,
-                        rmt_mode=sync_mode)
+                        rmt_mode=sync_mode,
+                        customWordGroupId=customWordGroupId)
                     if not ret:
                         log.error("【Sync】%s 处理失败：%s" % (monpath, ret_msg))
 

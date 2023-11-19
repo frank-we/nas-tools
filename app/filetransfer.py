@@ -501,7 +501,8 @@ class FileTransfer:
                        min_filesize=None,
                        udf_flag=False,
                        domain="tmdb",
-                       root_path=False):
+                       root_path=False,
+                       customWordGroupId=None):
         """
         识别并转移一个文件、多个文件或者目录
         :param in_from: 来源，即调用该功能的渠道
@@ -515,6 +516,7 @@ class FileTransfer:
         :param season: 手动识别目录或文件时传入的的字号，如未输入，则自动识别
         :param episode: (EpisodeFormat，是否批处理匹配)
         :param min_filesize: 过滤小文件大小的上限值
+        :param customWordGroupId: 指定应用自定义识别词
         :param udf_flag: 自定义转移标志，为True时代表是自定义转移，此时很多处理不一样
         :param root_path: 是否根目录下的文件
         :param domain: 刮削的网站域名类型，有 tmdb jav，默认tmdb
@@ -647,7 +649,8 @@ class FileTransfer:
                 Medias = self.jmedia.get_media_info_on_files(
                     file_list, number=tmdb_info.get_number())
             else:
-                Medias = self.jmedia.get_media_info_on_files(file_list)
+                Medias = self.jmedia.get_media_info_on_files(
+                    file_list, customWordGroupId=customWordGroupId)
         else:
             #  过滤掉文件列表
             file_list, msg = self.check_ignore(file_list=file_list)
@@ -661,7 +664,8 @@ class FileTransfer:
                 media_type,
                 season,
                 episode[0],
-                had_nfo=rmt_mode == RmtMode.UPDATE)
+                had_nfo=rmt_mode == RmtMode.UPDATE,
+                customWordGroupId=customWordGroupId)
 
         if not Medias:
             log.error("【Rmt】检索媒体信息出错！")

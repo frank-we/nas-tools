@@ -66,7 +66,12 @@ class JMeta(object):
     # 其它信息
     jav_info = {}
 
-    def __init__(self, title, subtitle=None, number=None, fileflag=False):
+    def __init__(self,
+                 title,
+                 subtitle=None,
+                 number=None,
+                 fileflag=False,
+                 customWordGroupId=None):
         if not title:
             return
 
@@ -77,9 +82,17 @@ class JMeta(object):
             self.part = re_res.group(1)
 
         # 应用自定义识别词
-        title, _, _ = WordsHelper().process(title)
-        if subtitle:
-            subtitle, _, _ = WordsHelper().process(subtitle)
+
+        if customWordGroupId:
+            title, _, _ = WordsHelper().processByGid(title=title,
+                                                     gid=customWordGroupId)
+            if subtitle:
+                subtitle, _, _ = WordsHelper().processByGid(
+                    title=subtitle, gid=customWordGroupId)
+        else:
+            title, msg, used_info = WordsHelper().process(title=title)
+            if subtitle:
+                subtitle, _, _ = WordsHelper().process(title=subtitle)
 
         self.number = number if number else getNumber(title)
         self.title = title

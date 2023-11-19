@@ -18,7 +18,10 @@ class JavMedia:
     def __init__(self):
         self.config = Config().get_config('jav')
 
-    def get_media_info_on_files(self, file_list, number=None):
+    def get_media_info_on_files(self,
+                                file_list,
+                                number=None,
+                                customWordGroupId=None):
         """
         根据文件清单，搜刮信息，用于文件名称的识别
         :param file_list: 文件清单，如果是列表也可以是单个文件，也可以是一个目录
@@ -40,7 +43,9 @@ class JavMedia:
             count += 1
             try:
                 fileName = os.path.basename(file_path)
-                jMeta = JMeta(fileName, number=number)
+                jMeta = JMeta(fileName,
+                              number=number,
+                              customWordGroupId=customWordGroupId)
                 if not jMeta.get_number():
                     log.error('【Rmt】Error in Jav: %s 番号无法识别！' % fileName)
                     continue

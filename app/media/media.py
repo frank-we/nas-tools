@@ -812,7 +812,8 @@ class Media:
                                 season=None,
                                 episode_format: EpisodeFormat = None,
                                 chinese=True,
-                                had_nfo=False):
+                                had_nfo=False,
+                                customWordGroupId=None):
         """
         根据文件清单，搜刮TMDB信息，用于文件名称的识别
         :param file_list: 文件清单，如果是列表也可以是单个文件，也可以是一个目录
@@ -822,6 +823,7 @@ class Media:
         :param episode_format: EpisodeFormat
         :param chinese: 原标题为英文时是否从别名中检索中文名称
         :param had_nfo: 同文件夹下是否带同名nfo文件，是的话直接获取tmdbid进行刮削
+        :param customWordGroupId: 指定应用自定义识别词
         :return: 带有TMDB信息的每个文件对应的MetaInfo对象字典
         """
         # 存储文件路径与媒体的对应关系
@@ -852,7 +854,8 @@ class Media:
                 # 没有自带TMDB信息
                 if not tmdb_info:
                     # 识别名称
-                    meta_info = MetaInfo(title=file_name)
+                    meta_info = MetaInfo(title=file_name,
+                                         customWordGroupId=customWordGroupId)
                     # 识别不到则使用上级的名称
                     if not meta_info.get_name() or not meta_info.year:
                         parent_info = MetaInfo(parent_name)
