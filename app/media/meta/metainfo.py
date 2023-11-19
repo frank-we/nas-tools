@@ -27,9 +27,9 @@ def MetaInfo(title, subtitle=None, mtype=None, customWordGroupId=None):
             subtitle, _, _ = WordsHelper().processByGid(title=subtitle,
                                                         gid=customWordGroupId)
     else:
-        title, msg, used_info = WordsHelper().process(title)
+        title, msg, used_info = WordsHelper(gid=-1).process(title=title)
         if subtitle:
-            subtitle, _, _ = WordsHelper().process(subtitle)
+            subtitle, _, _ = WordsHelper(gid=-1).process(title=subtitle)
 
     if msg:
         for msg_item in msg:

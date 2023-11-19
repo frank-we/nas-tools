@@ -1062,6 +1062,7 @@ class FileTransfer:
                         sleep(round(random.uniform(0, 1), 1))
 
             except Exception as err:
+                failed_count += 1
                 ExceptionUtils.exception_traceback(err)
                 log.error("【Rmt】文件转移时发生错误：%s - %s" %
                           (str(err), traceback.format_exc()))

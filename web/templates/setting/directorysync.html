@@ -211,7 +211,6 @@
     $("#domain").val("tmdb");
     $("#rename_flag").prop("checked", true);
     $("#domain").attr("disabled", false);
-    $("#custom_word").attr("disabled", true);
   }
 
   // 打开编辑窗口
@@ -231,10 +230,8 @@
         if (sync_item.rename == 1) {
           $("#rename_flag").prop("checked", true);
           $("#domain").attr("disabled", false);
-          $("#custom_word").attr("disabled", true);
         } else {
           $("#rename_flag").prop("checked", false);
-          $("#custom_word").attr("disabled", false);
           $("#domain").attr("disabled", true);
         }
         if (sync_item.enabled == 1) {
@@ -254,10 +251,8 @@
     if (e) {
       $("#domain").val("tmdb")
       $("#domain").attr("disabled", false);
-      $("#custom_word").attr("disabled", true);
     } else {
       $("#domain").val("")
-      $("#custom_word").attr("disabled", false);
       $("#domain").attr("disabled", true);
     }
   }

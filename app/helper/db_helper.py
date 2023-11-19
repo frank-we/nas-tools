@@ -2348,8 +2348,16 @@ class DbHelper:
             return self._db.query(CUSTOMWORDS).filter(CUSTOMWORDS.ID == int(wid)) \
                 .order_by(CUSTOMWORDS.GROUP_ID).all()
         elif gid:
-            return self._db.query(CUSTOMWORDS).filter(CUSTOMWORDS.GROUP_ID == int(gid)) \
-                .order_by(CUSTOMWORDS.GROUP_ID).all()
+
+            if wtype and enabled is not None and regex is not None:
+                return self._db.query(CUSTOMWORDS).filter(CUSTOMWORDS.GROUP_ID == int(gid),
+                                                          CUSTOMWORDS.ENABLED == int(enabled),
+                                                        CUSTOMWORDS.TYPE == int(wtype),
+                                                        CUSTOMWORDS.REGEX == int(regex)) \
+                                                .order_by(CUSTOMWORDS.GROUP_ID).all()
+            else:
+                return self._db.query(CUSTOMWORDS).filter(CUSTOMWORDS.GROUP_ID == int(gid)) \
+                    .order_by(CUSTOMWORDS.GROUP_ID).all()
         elif wtype and enabled is not None and regex is not None:
             return self._db.query(CUSTOMWORDS).filter(CUSTOMWORDS.ENABLED == int(enabled),
                                                       CUSTOMWORDS.TYPE == int(wtype),
