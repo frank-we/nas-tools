@@ -355,7 +355,7 @@ class Sync(object):
                     unknown_path = target_info.get('unknown')
                     sync_mode = target_info.get('syncmod')
                     domain = target_info.get('domain')
-                    customWordGroupId = target_dirs.get('customWordId')
+                    customWordGroupId = target_info.get('customWordGroupId')
                     # 判断是否根目录
                     is_root_path = False
                     for m_path in self.sync_dir_config.keys():
