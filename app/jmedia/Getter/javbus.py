@@ -60,7 +60,7 @@ def getYear(getRelease):  # 获取年份
 def getCover(htmlcode, domain=None):  # 获取封面链接
     doc = pq(htmlcode)
     image = doc('a.bigImage')
-    if domain:
+    if domain and not re.match('http', image, re.I):
         return domain + image.attr('href')
     return image.attr('href')
 
