@@ -101,14 +101,14 @@ def getNumber(filepath):
         file_number = re.search('XXX-AV-\d{4,}', filename.upper()).group()
         return file_number
     elif '-' in filename or '_' in filename:  # 普通提取番号 主要处理包含减号-和_的番号
-        if 'FC2' or 'fc2' in filename:
+        if re.search('FC2', filename, re.I):
             filename = filename.upper().replace('PPV', '').replace('--', '-')
-        if re.search('FC2-\d{5,}', filename):  # 提取类似fc2-111111番号
-            file_number = re.search('FC2-\d{5,}', filename).group()
-        elif re.search('[a-zA-Z]+-\d+', filename):  # 提取类似mkbd-120番号
-            file_number = re.search('\w+-\d+', filename).group()
+        if re.search('FC2-\d{5,}', filename, re.I):  # 提取类似fc2-111111番号
+            file_number = re.search('FC2-\d{5,}', filename, re.I).group()
         elif re.search('\d+[a-zA-Z]+-\d+', filename):  # 提取类似259luxu-1111番号
             file_number = re.search('\d+[a-zA-Z]+-\d+', filename).group()
+        elif re.search('[a-zA-Z]+-\d+', filename):  # 提取类似mkbd-120番号
+            file_number = re.search('\w+-\d+', filename).group()
         elif re.search('[a-zA-Z]+-[a-zA-Z]\d+', filename):  # 提取类似mkbd-s120番号
             file_number = re.search('[a-zA-Z]+-[a-zA-Z]\d+', filename).group()
         elif re.search('\d+-[a-zA-Z]+', filename):  # 提取类似 111111-MMMM 番号
@@ -162,17 +162,14 @@ def getDataFromJSON(file_number,
         elif re.match('\d+[a-zA-Z]+-\d+',
                       file_number) or 'SIRO' in file_number.upper():
             json_data = json.loads(
-                mgstage.main(file_number, appoint_url, domain=domain))
-            file_number = re.search('[a-zA-Z]+-\d+', file_number).group()
+                javbus.main(file_number, appoint_url, domain=domain))
+            # file_number = re.search('[a-zA-Z]+-\d+', file_number).group()
             if getDataState(json_data) == 0:
                 json_data = json.loads(
                     jav321.main(file_number, appoint_url, domain=domain))
             if getDataState(json_data) == 0:
                 json_data = json.loads(
                     javdb.main(file_number, appoint_url, domain=domain))
-            if getDataState(json_data) == 0:
-                json_data = json.loads(
-                    javbus.main(file_number, appoint_url, domain=domain))
         # ==========FC2-111111
         elif 'FC2' in file_number.upper():
             json_data = json.loads(
