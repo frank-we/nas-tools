@@ -88,9 +88,9 @@ class JavMedia:
             raise Exception('Cover_small Url is None!')
 
         # ======判断-C,-CD后缀,无码,流出
-        if re.search(r'\d+-?(c|中文|字幕|-uc)', filepath, re.IGNORECASE):
+        if re.search(r'\d+-?(c|中文|字幕|uc)', filepath, re.IGNORECASE):
             json_data['cn_sub'] = True
-        if json_data['isuncensored'] or re.search(r'(-uc|uncensored)', filepath, re.IGNORECASE):
+        if json_data['isuncensored'] or re.search(r'\d+-?(uc?|uncensored|)', filepath, re.IGNORECASE):
             json_data['isuncensored'] = True
         if '流出' in os.path.split(filepath):
             json_data['leak'] = True
