@@ -52,8 +52,7 @@ class JavMedia:
 
                 log.info("【Rmt】开始刮削： [" + file_path + "], the number is [" +
                          jMeta.get_number() + "]")
-                result = self.Core_Main(filepath=file_path,
-                                        jMeta=jMeta,
+                result = self.Core_Main(jMeta=jMeta,
                                         jav_site=jav_site,
                                         domain=jav_domain)
                 if (result.get_title_string()):
@@ -66,7 +65,7 @@ class JavMedia:
 
         return return_media_infos
 
-    def Core_Main(self, filepath, jMeta, jav_site, domain, appoint_url=''):
+    def Core_Main(self, jMeta, jav_site, domain, appoint_url=''):
         # ======获取json_data
         json_data = self.get_json_data(jav_site=jav_site,
                                        number=jMeta.get_number(),
@@ -88,11 +87,11 @@ class JavMedia:
             raise Exception('Cover_small Url is None!')
 
         # ======判断-C,-CD后缀,无码,流出
-        if re.search(r'\d+-?(c|中文|字幕|uc)', filepath, re.IGNORECASE):
+        if re.search(r'\d+-?(c|中文|字幕|uc)', jMeta.org_name, re.IGNORECASE):
             json_data['cn_sub'] = True
-        if json_data['isuncensored'] or re.search(r'\d+-?(uc?|uncensored|)', filepath, re.IGNORECASE):
+        if json_data['isuncensored'] or re.search(r'\d+-?(uc?|uncensored|)', jMeta.org_name, re.IGNORECASE):
             json_data['isuncensored'] = True
-        if '流出' in os.path.split(filepath):
+        if '流出' in os.path.split(jMeta.org_name):
             json_data['leak'] = True
         jMeta.set_info(json_data=json_data)
         return jMeta
