@@ -75,8 +75,6 @@ class JMeta(object):
         if not title:
             return
 
-        self.org_name = title
-
         re_res = re.search(r"%s" % self._part_re, title, re.IGNORECASE)
         if re_res:
             self.part = re_res.group(1)
@@ -95,7 +93,7 @@ class JMeta(object):
                 subtitle, _, _ = WordsHelper().process(title=subtitle)
 
         self.number = number if number else getNumber(title)
-        self.title = title
+        self.org_name = self.title = title
         self.subtitle = subtitle
         self.fileflag = fileflag
 
