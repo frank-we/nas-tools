@@ -108,7 +108,7 @@ def getNumber(filepath):
         elif re.search('\d+[a-zA-Z]+-\d+', filename):  # 提取类似259luxu-1111番号
             file_number = re.search('\d+[a-zA-Z]+-\d+', filename).group()
         elif re.search('[a-zA-Z]+-\d+', filename):  # 提取类似mkbd-120番号
-            file_number = re.search('\w+-\d+', filename).group()
+            file_number = re.search('[a-zA-Z]+-\d+', filename).group()
         elif re.search('[a-zA-Z]+-[a-zA-Z]\d+', filename):  # 提取类似mkbd-s120番号
             file_number = re.search('[a-zA-Z]+-[a-zA-Z]\d+', filename).group()
         elif re.search('\d+-[a-zA-Z]+', filename):  # 提取类似 111111-MMMM 番号
