@@ -213,7 +213,8 @@ def index():
     ShowLog = True
     if MSType == 'jellyfin':
         ShowLog = Config().get_config('jellyfin').get('show_log')
-    Activity = WebAction().get_library_playhistory().get("result")if ShowLog else []
+    Activity = WebAction().get_library_playhistory().get(
+        "result") if ShowLog else []
 
     # 磁盘空间
     LibrarySpaces = WebAction().get_library_spacesize()
@@ -1086,8 +1087,15 @@ def basic():
         proxy = proxy.replace("http://", "")
     RmtModeDict = WebAction().get_rmt_modes()
     CustomScriptCfg = SystemConfig().get_system_config("CustomScript")
+    config = Config().get_config()
+    translate = config.get('translate', None)
+    if not translate or not translate.get('domain', None):
+        config['translate'] = {}
+        config['translate']['domain'] = ''
+        config['translate']['token'] = ''
+        Config().save_config(config)
     return render_template("setting/basic.html",
-                           Config=Config().get_config(),
+                           Config=config,
                            Proxy=proxy,
                            RmtModeDict=RmtModeDict,
                            CustomScriptCfg=CustomScriptCfg)

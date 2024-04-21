@@ -30,6 +30,7 @@ class Translate:
             _domain = domain
             _token = token
         if not self._domain or not self._token:
+            log.error("【Translate】未配置DeepLX API！")
             return False, "未配置翻译服务"
         success = False
         ret_msg = ""
@@ -53,6 +54,7 @@ class Translate:
                 else:
                     if (res.text):
                         ret_msg = res.json().get("data")
+                        log.info("【Translate】'%s' 翻译为 '%s'" % (text, ret_msg))
                         success = True
             except Exception as e:
                 ExceptionUtils.exception_traceback(e)
