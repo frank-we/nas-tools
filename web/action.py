@@ -30,6 +30,7 @@ from app.media.meta import MetaInfo, MetaBase
 from app.mediaserver import MediaServer
 from app.message import Message, MessageCenter
 from app.rss import Rss
+from app.translate import Translate
 from app.rsschecker import RssChecker
 from app.scheduler import stop_scheduler
 from app.sites import Sites
@@ -78,6 +79,7 @@ class WebAction:
             "update_system": self.update_system,
             "reset_db_version": self.__reset_db_version,
             "logout": self.__logout,
+            "test_translate": self.__test_translate,
             "update_config": self.__update_config,
             "update_directory": self.__update_directory,
             "add_or_edit_sync_path": self.__add_or_edit_sync_path,
@@ -1288,6 +1290,17 @@ class WebAction:
         """
         logout_user()
         return {"code": 0}
+
+    def __test_translate(self, data):
+        """
+        翻译服务测试
+        """
+        domain = data.get('domain')
+        token = data.get('token')
+        if not domain or not token:
+            return {"code": 200, "flag": False}
+        flag, msg = Translate().text_tranlation(domain=domain, token=token)
+        return {"code": 200, "flag": flag}
 
     def __update_config(self, data):
         """

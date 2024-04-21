@@ -28,6 +28,7 @@ def getTitle(htmlcode):  # 获取标题
     title = str(doc('div.container h3').text())
     try:
         title2 = re.sub('n\d+-', '', title)
+        title2 = re.sub('[\s\-]*[\u2E80-\u9FFF]+$', '', title2)
         return title2
     except:
         return title

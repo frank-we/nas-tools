@@ -8,8 +8,7 @@ from app.utils.types import JavDomainType
 from app.utils import ExceptionUtils
 from config import Config
 from .jmeta import JMeta
-from app.jmedia.Function.Function import get_info, getDataFromJSON, escapePath, getNumber
-from app.jmedia.Function.getHtml import get_html, get_proxies, get_config
+from app.jmedia.Function.Function import getDataFromJSON
 
 
 class JavMedia:

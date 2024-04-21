@@ -144,6 +144,33 @@
             <div class="row">
               <div class="col-lg">
                 <div class="mb-3">
+                  <label class="form-label">DeepL-X翻译服务地址<span class="form-help"
+                      title="DeepL-X翻译服务http://127.0.0.1:1188/translate" data-bs-toggle="tooltip">?</span></label>
+                  <input type="text" value="{{ Config.translate.domain or '' }}" class="form-control"
+                    id="translate.domain" placeholder="http://..../translate" autocomplete="off">
+                </div>
+              </div>
+              <div class="col-lg">
+                <div class="mb-3">
+                  <label class="form-label">DeepL-X翻译服务token<span class="form-help" title="DeepL-X翻译服务token"
+                      data-bs-toggle="tooltip">?</span></label>
+                  <input type="text" value="{{ Config.translate.token or '' }}" class="form-control"
+                    id="translate.token" placeholder="" autocomplete="off">
+                </div>
+              </div>
+              <div class="col-lg">
+                <div class="mb-3">
+                  <label class="form-label">翻译服务测试 <span class="form-help" title="翻译服务测试，必填"
+                      data-bs-toggle="tooltip">?</span></label>
+                  <a id="basic_test_btn" href="javascript:test_translate()" class="btn ">
+                    翻译服务测试
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg">
+                <div class="mb-3">
                   <label class="form-label">User-Agent <span class="form-help" title="如发现被豆瓣、PT站等封堵，请适当修改此项"
                       data-bs-toggle="tooltip">?</span></label>
                   <input type="text" value="{{ Config.app.user_agent or '' }}" class="form-control" id="app.user_agent"
@@ -1164,6 +1191,22 @@
     ajax_post("update_config", params, function (ret) {
       if (flag) {
         $("#" + type + "_btn").text("保存").attr("disabled", false);
+      }
+    });
+  }
+
+  // 测试翻译服务
+  function test_translate (type, flag = true) {
+    let params = {
+      'domain': $("#translate\\.domain").val(),
+      'token': $("#translate\\.token").val()
+    };
+    $("#basic_test_btn").text("测试中...").attr("disabled", true);
+    ajax_post("test_translate", params, function (ret) {
+      if (ret.flag) {
+        $("#basic_test_btn").text("测试成功").attr("disabled", false);
+      } else {
+        $("#basic_test_btn").text("测试失败").attr("disabled", false);
       }
     });
   }

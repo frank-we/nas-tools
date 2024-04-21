@@ -3,9 +3,9 @@
 import re
 import os
 import json
-from configparser import ConfigParser
 from app.jmedia.Getter import avsox, javbus, javdb, mgstage, dmm, jav321, xcity
 from app.utils.types import JavDomainType
+from app.translate import Translate
 
 
 def is_uncensored(number):
@@ -254,6 +254,7 @@ def getDataFromJSON(file_number,
     number = json_data['number']
     actor_list = str(json_data['actor']).strip("[ ]").replace("'", '').split(
         ',')  # 字符串转列表
+    actor = str(actor_list).strip("[ ]").replace("'", '').replace(" ", '')
     release = json_data['release']
     try:
         cover_small = json_data['cover_small']
@@ -261,7 +262,6 @@ def getDataFromJSON(file_number,
         cover_small = ''
     tag = str(json_data['tag']).strip("[ ]").replace("'", '').replace(
         " ", '').split(',')  # 字符串转列表 @
-    actor = str(actor_list).strip("[ ]").replace("'", '').replace(" ", '')
 
     # ==========处理异常字符========== #\/:*?"<>|
     title = title.replace(actor, '')
@@ -287,16 +287,22 @@ def getDataFromJSON(file_number,
             json_data[key] = str(value).replace('/', '')
     # ==========处理异常字符 END========== #\/:*?"<>|
 
-    if config:
-        naming_media = config['Name_Rule']['naming_media']
-        naming_file = config['Name_Rule']['naming_file']
-        folder_name = config['Name_Rule']['folder_name']
-        json_data['naming_media'] = naming_media
-        json_data['naming_file'] = naming_file
-        json_data['folder_name'] = folder_name
-
     # 返回处理后的json_data
-    json_data['title'] = title
+    json_data['original_title'] = title
+    flag, text = Translate().get_tranlation(source_lang='JP', text=title)
+    if flag:
+        json_data['title'] = text
+    else:
+        json_data['title'] = title
+
+    if json_data['original_title'] != json_data['outline']:
+        flag, overview = Translate().get_tranlation(source_lang='JP',
+                                                    text=json_data['outline'])
+        if flag:
+            json_data['outline'] = overview
+    else:
+        json_data['outline'] = text
+
     json_data['number'] = number
     json_data['actor'] = actor
     json_data['release'] = release

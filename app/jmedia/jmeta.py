@@ -127,7 +127,7 @@ class JMeta(object):
         self.jav_info = json_data
         self.number = json_data.get('number', '')
         self.title = json_data.get('title', '')
-        self.original_title = json_data.get('title', '')
+        self.original_title = json_data.get('original_title', '')
         self.studio = json_data.get('studio', '')
         self.publisher = json_data.get('publisher', '')
         self.year = json_data.get('year', '')
@@ -147,7 +147,7 @@ class JMeta(object):
         self.isuncensored = json_data.get('isuncensored', False)
 
         if len(self.title) > 20:
-            self.title = "%s…" % self.title[:20]
+            self.title = "%s…" % self.title[:40]
 
         if self.leak and '流出' not in self.tag:
             self.tag.append('流出')
